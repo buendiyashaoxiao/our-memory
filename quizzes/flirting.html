@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>暧昧的时候，你怎么放电？</title>
+<style>
+  :root{ --bg:#FBF4E8;--card:#FFFFFF;--ink:#3A2C18;--ink2:#5E4C33;--muted:#A8947A;--accent:#C46A12;--soft:#F8E6CF;--line:#F0E3D0;--g1:#E08A2E;--g2:#A5520C }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{background:var(--bg)}
+  body{color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  #app{max-width:480px;margin:0 auto;min-height:100vh;padding:28px 16px 56px}
+  .screen{display:none}
+  .screen.active{display:block;animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* 首页 */
+  .hero{background:linear-gradient(150deg,var(--g1),var(--g2));color:#fff;border-radius:24px;padding:40px 24px 34px;margin-top:12px;position:relative;overflow:hidden}
+  .hero:after{content:"";position:absolute;right:-50px;top:-50px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.12)}
+  .hero .kicker{font-size:13px;opacity:.85;letter-spacing:2px}
+  .hero h1{font-size:31px;line-height:1.32;margin:10px 0 14px;position:relative}
+  .hero p{font-size:15px;opacity:.94;position:relative}
+  .meta{display:flex;gap:10px;margin:18px 0 24px}
+  .meta span{flex:1;background:var(--card);border-radius:14px;padding:12px 0;text-align:center;font-size:13px;color:var(--muted)}
+  .meta b{display:block;font-size:18px;color:var(--ink)}
+  .btn{display:block;width:100%;min-height:52px;border:none;border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;padding:0 12px}
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.soft{background:var(--soft);color:var(--accent)}
+  .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+  .btn + .btn{margin-top:12px}
+  .row{display:flex;gap:10px}
+  .row .btn{margin-top:0;flex:1;font-size:15px}
+  .note{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.7}
+  .author{display:block;margin:36px auto 0;background:none;border:none;color:var(--muted);font-size:12px;text-decoration:underline;font-family:inherit;cursor:pointer}
+
+  /* 答题页 */
+  .qhead{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+  .qback{border:0;background:var(--card);width:38px;height:38px;border-radius:50%;font-size:20px;color:var(--ink);cursor:pointer;flex:none;font-family:inherit}
+  .bar{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+  .count{font-size:13px;color:var(--muted);flex:none;min-width:44px;text-align:right}
+  #qWrap.anim{animation:fadeIn .28s ease}
+  .qtext{font-size:20px;font-weight:700;line-height:1.55;margin-bottom:22px}
+  .opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:15px 14px;margin-bottom:12px;font-size:15px;color:var(--ink);font-family:inherit;cursor:pointer;line-height:1.55;transition:border-color .15s,background .15s}
+  @media (hover:hover){.opt:hover{border-color:var(--accent)}}
+  .opt .k{flex:none;width:26px;height:26px;border-radius:50%;background:var(--soft);color:var(--accent);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .opt.sel{border-color:var(--accent);background:var(--soft)}
+  .opt.sel .k{background:var(--accent);color:#fff}
+
+  /* 结果页 */
+  .result-img{width:100%;border-radius:16px;display:block;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+  .tip{text-align:center;font-size:12px;color:var(--muted);margin:10px 0 18px}
+  .card{background:var(--card);border-radius:20px;padding:22px 18px;margin-top:20px}
+  .card h3{font-size:18px;margin-bottom:4px}
+  .muted{color:var(--muted)}
+  .small{font-size:13px}
+
+  /* 作者预览 */
+  .pv-item{margin-bottom:28px}
+  .pv-item h3{font-size:14px;color:var(--muted);font-weight:500;margin-bottom:8px}
+
+  #toast{position:fixed;left:50%;bottom:70px;transform:translateX(-50%);background:rgba(30,26,30,.9);color:#fff;padding:10px 18px;border-radius:22px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:20;max-width:86vw;text-align:center}
+  #toast.show{opacity:1}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:30;padding:20px}
+  .modal.hidden{display:none}
+  .modal-box{background:#fff;border-radius:16px;padding:20px;width:100%;max-width:420px}
+  .modal-box p{font-size:14px;color:var(--ink2);margin-bottom:10px}
+  .modal-box textarea{width:100%;height:160px;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px;font-family:inherit;margin-bottom:12px;resize:none}
+
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- 首页 -->
+  <section id="home" class="screen active">
+    <div class="hero">
+      <div class="kicker" id="kicker"></div>
+      <h1 id="heroTitle"></h1>
+      <p id="heroDesc"></p>
+    </div>
+    <div class="meta" id="meta"></div>
+    <button class="btn primary" id="startBtn">开始测试</button>
+    <div id="homeExtra"></div>
+    <div class="note" id="note"></div>
+    <button class="author" id="authorBtn">作者预览：查看全部结果卡</button>
+  </section>
+
+  <!-- 答题页 -->
+  <section id="quiz" class="screen">
+    <div class="qhead">
+      <button class="qback" id="qBack" aria-label="上一题">‹</button>
+      <div class="bar"><i id="qBar"></i></div>
+      <div class="count" id="qNum"></div>
+    </div>
+    <div id="qWrap">
+      <div class="qtext" id="qText"></div>
+      <div id="qOpts"></div>
+    </div>
+  </section>
+
+  <!-- 结果页 -->
+  <section id="result" class="screen">
+    <img class="result-img" id="resultImg" alt="测试结果">
+    <div class="tip">手机上长按图片可以直接保存</div>
+    <div class="row">
+      <button class="btn primary" id="saveBtn">保存图片</button>
+      <button class="btn soft" id="copyBtn">复制文案</button>
+      <button class="btn ghost" id="againBtn">再测一次</button>
+    </div>
+
+  </section>
+
+  <!-- 作者预览 -->
+  <section id="preview" class="screen">
+    <div class="qhead">
+      <button class="qback" id="pvBack" aria-label="返回">‹</button>
+      <div style="font-weight:600">全部结果卡预览</div>
+    </div>
+    <div id="pvList"></div>
+  </section>
+
+</div>
+
+<div id="toast"></div>
+<div class="modal hidden" id="modal">
+  <div class="modal-box">
+    <p>自动复制没有成功，请长按下面的文字，全选后复制</p>
+    <textarea id="manualText" readonly></textarea>
+    <button class="btn primary" id="modalClose">好的</button>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   数据区：改文案只需要改这里
+   暧昧放电测试：心理学家杰弗里·霍尔提出的五种调情风格
+     TR 传统型 / PO 礼貌型 / SI 真诚型 / PH 身体型 / PL 俏皮型
+   每道题五个选项各对应一种风格，选得最多的就是你的主电波，第二多的是隐藏电波。
+   平局时按 TIE_ORDER 的顺序取前面的。
+   ========================================================== */
+const QUIZ = {
+  kicker: '恋爱心理小测试',
+  heroTitle: '暧昧的时候，<br>你是怎么放电的？',
+  heroDesc: '有人靠聊天到凌晨三点，有人靠一个眼神，有人靠互怼。12 个暧昧期现场，测出你的放电方式，也看看你最容易错过哪种信号。',
+  meta: [['12', '道题'], ['3', '分钟'], ['5', '种电波']],
+  note: '五种放电方式来自心理学家杰弗里·霍尔的调情风格研究。这是趣味版，结果只代表一个倾向。',
+  cardHead: '暧昧放电测试',
+  footer: '暧昧放电测试 · 长按图片保存',
+  shuffle: true,
+  colors: { bg: '#FBF4E8', card: '#FFFFFF', ink: '#3A2C18', ink2: '#5E4C33', muted: '#A8947A',
+    accent: '#C46A12', soft: '#F8E6CF', line: '#F0E3D0', g1: '#E08A2E', g2: '#A5520C' },
+};
+const ORDER = ['TR', 'PO', 'SI', 'PH', 'PL'];
+const TIE_ORDER = ['SI', 'PL', 'PH', 'PO', 'TR'];
+
+const STYLES = {
+  TR: { name: '按剧本来', char: '序', sci: '传统型', tag: '暧昧也要有暧昧的规矩',
+    desc: '你觉得喜欢一个人是件郑重的事，得一步一步来：先认识，再约会，然后正式表白。你在意仪式感，也在意谁先开口、谁来买单这些“规矩”。和你暧昧，不会不明不白。',
+    signals: ['早安晚安从不缺席', '约会提前订好位置，准时出现', '在朋友面前对 TA 格外照顾，但从不越界'],
+    misread: '太慢热、太守规矩，对方可能等不到你的下一步。',
+    miss: '对方用玩笑或者眼神示好时，你可能以为 TA 只是随便说说。',
+    attract: '同样看重认真和仪式感的人，最欣赏你的靠谱。',
+    crash: '你在等 TA 先开口，TA 也在等你先开口，一等就是三个月。',
+    tip: '规矩可以有，但别让“该谁先主动”拦住一段可能。' },
+  PO: { name: '分寸感大师', char: '寸', sci: '礼貌型', tag: '喜欢你，但绝不让你为难',
+    desc: '你喜欢一个人时，第一反应是别让对方为难。你不会说越界的话，不会做冒犯的事，示好也是一点一点来。你很让人安心，但也很难让人看出你到底有没有意思。',
+    signals: ['记得 TA 说过的每一件事，但不会刻意提起', '消息发出去之前，会再检查一遍措辞', '总是先问一句“方便吗”“会不会打扰你”'],
+    misread: '对谁都这么客气，对方分不清你是喜欢还是礼貌。',
+    miss: '对方靠近一点、主动一点的时候，你会下意识地后退一步。',
+    attract: '慢热、敏感、怕被冒犯的人，在你身边会觉得特别安全。',
+    crash: '暧昧了半年，对方在朋友圈官宣了，对象不是你。你才想起来，你从来没说出口。',
+    tip: '分寸感是你的魅力。只是偶尔也要让对方确定：我对你，和对别人不一样。' },
+  SI: { name: '深夜电台', char: '真', sci: '真诚型', tag: '先懂你，再喜欢你',
+    desc: '你的放电方式是聊天。聊喜欢的书、小时候的事、对以后的想法，聊着聊着就到了凌晨。对你来说，心动是从“被看见”开始的，你想先了解一个人，再决定要不要喜欢。',
+    signals: ['回消息是一大段，分享很多自己的想法', '会追问“那你当时是什么感觉”', '第三次见面，就说出了藏在心里很久的事'],
+    misread: '交心太快，有人会被吓到；也有人把你当成最好的倾诉对象，而不是恋人。',
+    miss: '对方只想轻松地玩一玩、逗一逗的时候，你还在认真地聊人生。',
+    attract: '同样想要深度连接的人，和你一聊就停不下来。',
+    crash: '聊了三个月，从原生家庭聊到人生理想，最后 TA 说：“你真是我最好的朋友。”',
+    tip: '真诚是你的超能力。记得在交心之外，也留一点让人心跳的时刻。' },
+  PH: { name: '眼神放电机', char: '电', sci: '身体型', tag: '不用说话，靠近就是答案',
+    desc: '你不太擅长在嘴上绕弯子，你的喜欢写在身体上：眼神多停一秒，坐得近一点，笑的时候碰一下对方的胳膊。你相信感觉，火花来的时候，你一定知道。',
+    signals: ['眼神对上了不躲，反而多看几秒', '聊天时不自觉地往对方那边靠', '告别时一个稍微久一点的拥抱'],
+    misread: '对方会以为你对谁都这样，或者觉得你太快了。',
+    miss: '对方在文字里、在小事上对你好，你却觉得“差点感觉”。',
+    attract: '同样相信化学反应的人，你们一见面就知道。',
+    crash: '你觉得气氛已经到位了，TA 回家后发来消息：“今天聊得挺开心的，我们是朋友吧？”',
+    tip: '你的直觉很准，但记得确认对方也在同一个频道。多问一句“可以吗”，靠近会更安心。' },
+  PL: { name: '互怼搭子', char: '逗', sci: '俏皮型', tag: '先逗你笑，再让你心动',
+    desc: '你暧昧的方式是逗。互损、玩梗、半真半假地开玩笑，你让对方笑，也让对方猜。对你来说，好玩比什么都重要，能接住你的梗的人，才有可能接住你的心。',
+    signals: ['表情包一来一回，停不下来', '故意唱反调，就为了看 TA 着急', '用开玩笑的语气说真心话'],
+    misread: '太会开玩笑，对方分不清你哪句是真的。',
+    miss: '对方认真跟你说心里话的时候，你习惯性地接了个梗。',
+    attract: '同样幽默、反应快的人，你们斗着斗着就在一起了。',
+    crash: '你用开玩笑的语气表白了，TA 笑着说“哈哈哈你好好笑”，你也只好跟着笑。',
+    tip: '最重要的那一次，别开玩笑。认真说出来的那一句，才会被当真。' },
+};
+
+const QUESTIONS = [
+  { q: '朋友聚会上，你注意到一个很有好感的人：', opts: [
+    { t: '等 TA 先来搭话，或者请朋友帮忙介绍', s: 'TR' },
+    { t: '找个合适的时机礼貌地打声招呼，不会太热络', s: 'PO' },
+    { t: '找个角落跟 TA 聊，一不小心聊了一整晚', s: 'SI' },
+    { t: '眼神对上好几次，坐的位置越来越近', s: 'PH' },
+    { t: '故意接 TA 的话茬，开个玩笑逗 TA', s: 'PL' },
+  ]},
+  { q: '第一次单独约会，你最在意：', opts: [
+    { t: '该有的都要有：提前订位、准时到、送 TA 回家', s: 'TR' },
+    { t: '别冒犯到对方，分寸要拿捏好', s: 'PO' },
+    { t: '能不能聊到彼此真实的想法', s: 'SI' },
+    { t: '气氛对不对，有没有那种心跳的感觉', s: 'PH' },
+    { t: '好不好玩，千万别搞得像面试', s: 'PL' },
+  ]},
+  { q: '暧昧期聊天，你的消息风格是：', opts: [
+    { t: '规规矩矩，早安晚安不落下', s: 'TR' },
+    { t: '措辞斟酌，发之前会再看一遍', s: 'PO' },
+    { t: '大段大段的，分享很多自己的想法和经历', s: 'SI' },
+    { t: '更喜欢语音和视频，打字总觉得隔着一层', s: 'PH' },
+    { t: '表情包、梗图、互损，一来一回停不下来', s: 'PL' },
+  ]},
+  { q: '你怎么让对方知道“我对你有意思”？', opts: [
+    { t: '正式约 TA 出来，时机到了就好好表白', s: 'TR' },
+    { t: '一直对 TA 好，但不越界，等 TA 自己感觉到', s: 'PO' },
+    { t: '直接说：“我很喜欢跟你聊天，想多了解你。”', s: 'SI' },
+    { t: '靠近一点，碰一下胳膊，让 TA 自己感受', s: 'PH' },
+    { t: '开个半真半假的玩笑，看 TA 怎么接', s: 'PL' },
+  ]},
+  { q: '你觉得最有魅力的调情是：', opts: [
+    { t: '对方主动、认真，给足仪式感', s: 'TR' },
+    { t: '含蓄，点到为止，留一点余地', s: 'PO' },
+    { t: '聊着聊着，突然觉得被看见了', s: 'SI' },
+    { t: '一个眼神，一次不经意的触碰', s: 'PH' },
+    { t: '斗嘴斗到停不下来', s: 'PL' },
+  ]},
+  { q: '暧昧对象好几个小时没回你消息：', opts: [
+    { t: '按兵不动，不能显得太主动', s: 'TR' },
+    { t: '不追问，怕打扰到 TA', s: 'PO' },
+    { t: '有点失落，但下一条还是会认真地说自己的事', s: 'SI' },
+    { t: '算了，下次见面再说，隔着屏幕说不清', s: 'PH' },
+    { t: '发个表情包戳一下：“人呢？被外星人抓走了？”', s: 'PL' },
+  ]},
+  { q: '朋友说，你在喜欢的人面前会变得：', opts: [
+    { t: '一板一眼，像在走流程', s: 'TR' },
+    { t: '客气到对方以为你没意思', s: 'PO' },
+    { t: '特别真诚，第三次见面就交底了', s: 'SI' },
+    { t: '眼神都不一样了，整个人在发光', s: 'PH' },
+    { t: '变得特别欠，老是逗人家', s: 'PL' },
+  ]},
+  { q: '你更容易被哪种人吸引？', opts: [
+    { t: '靠谱、有担当、会安排', s: 'TR' },
+    { t: '有教养、懂分寸', s: 'PO' },
+    { t: '聊得深、情绪稳定、愿意袒露自己', s: 'SI' },
+    { t: '让我一见面就心跳加速的', s: 'PH' },
+    { t: '有趣、接得住梗', s: 'PL' },
+  ]},
+  { q: '关于“谁先表白”：', opts: [
+    { t: '有些事就该由某一方主动，这是规矩', s: 'TR' },
+    { t: '等确定对方也有意思再说，不想让谁尴尬', s: 'PO' },
+    { t: '感觉到了就说，没必要拖', s: 'SI' },
+    { t: '不用说，一个拥抱就是答案', s: 'PH' },
+    { t: '用开玩笑的方式说，万一被拒还能说“逗你的”', s: 'PL' },
+  ]},
+  { q: '约会结束，要分开的时候：', opts: [
+    { t: '坚持把 TA 送到楼下', s: 'TR' },
+    { t: '说一句“今天很开心，到家说一声”', s: 'PO' },
+    { t: '回去后发一段话，说今天哪句聊天让你印象很深', s: 'SI' },
+    { t: '一个拥抱，稍微久一点', s: 'PH' },
+    { t: '丢下一句“下次换我赢你”，转身就走', s: 'PL' },
+  ]},
+  { q: '暧昧期最让你反感的是：', opts: [
+    { t: '对方不按常理出牌，没个正形', s: 'TR' },
+    { t: '对方太心急，第一次见面就动手动脚', s: 'PO' },
+    { t: '聊了很久，还只停在表面', s: 'SI' },
+    { t: '对方像块木头，完全感觉不到温度', s: 'PH' },
+    { t: '对方太严肃，一个玩笑都开不得', s: 'PL' },
+  ]},
+  { q: '你的暧昧期，通常是这样结束的：', opts: [
+    { t: '约会几次，正式表白，按部就班在一起', s: 'TR' },
+    { t: '拖得太久，有时候就错过了', s: 'PO' },
+    { t: '聊透了，自然而然就在一起了', s: 'SI' },
+    { t: '火花来得快，很快就确定了', s: 'PH' },
+    { t: '玩着玩着，成了好朋友', s: 'PL' },
+  ]},
+];
+
+QUIZ.score = answers => {
+  const counts = { TR: 0, PO: 0, SI: 0, PH: 0, PL: 0 };
+  QUESTIONS.forEach((q, i) => { counts[q.opts[answers[i]].s]++; });
+  const ranked = TIE_ORDER.slice().sort((a, b) => counts[b] - counts[a] || TIE_ORDER.indexOf(a) - TIE_ORDER.indexOf(b));
+  return { counts, ranked, key: ranked[0], second: ranked[1] };
+};
+
+QUIZ.blocks = r => {
+  const T = STYLES[r.key], S2 = STYLES[r.second], n = QUESTIONS.length;
+  return [
+    { t: 'text', text: '暧昧的时候，你是', size: 32, color: COL.muted, align: 'center' },
+    { t: 'gap', h: 20 },
+    { t: 'seal', text: T.char },
+    { t: 'big', text: `「${T.name}」` },
+    { t: 'text', text: `${T.sci} · 霍尔五种调情风格`, size: 30, color: COL.muted, align: 'center' },
+    { t: 'gap', h: 18 },
+    { t: 'text', text: T.tag, size: 38, weight: 700, align: 'center' },
+    { t: 'gap', h: 44 },
+    { t: 'bars', items: r.ranked.map(k => ({ label: `${STYLES[k].name} · ${STYLES[k].sci}`, right: pct(r.counts[k], n) + '%', value: r.counts[k] / n, hi: k === r.key })) },
+    { t: 'text', text: r.counts[r.second] ? `隐藏电波：${S2.name}（${S2.sci}）` : '你的电波非常专一', size: 30, color: COL.muted, align: 'center' },
+    { t: 'divider' },
+    { t: 'section', title: '你放电的方式', text: T.desc },
+    { t: 'list', title: '你的电波长这样', items: T.signals },
+    { t: 'section', title: '暧昧期翻车现场', text: T.crash },
+    { t: 'section', title: '容易被误会成', text: T.misread },
+    { t: 'section', title: '你容易错过的信号', text: T.miss },
+    { t: 'section', title: '最容易被你电到的人', text: T.attract },
+    { t: 'quote', label: '给你的暧昧建议', text: T.tip },
+  ];
+};
+
+QUIZ.copy = r => {
+  const T = STYLES[r.key];
+  return `我测了「暧昧放电」，我是「${T.name}」（${T.sci}）：${T.tag}。\n\n${T.desc}\n\n暧昧期翻车现场：${T.crash}\n容易被误会成：${T.misread}\n最容易被我电到的人：${T.attract}\n隐藏电波：${STYLES[r.second].name}`;
+};
+QUIZ.fileName = r => `暧昧放电-${STYLES[r.key].name}.png`;
+QUIZ.previews = () => ORDER.map((k, i) => {
+  const counts = { TR: 1, PO: 1, SI: 2, PH: 1, PL: 2 }; counts[k] = 5;
+  const next = ORDER[(i + 2) % 5]; counts[next] = Math.max(counts[next], 3);
+  const ranked = TIE_ORDER.slice().sort((a, b) => counts[b] - counts[a] || TIE_ORDER.indexOf(a) - TIE_ORDER.indexOf(b));
+  return { label: `${STYLES[k].name}（${STYLES[k].sci}）`, result: { counts, ranked, key: ranked[0], second: ranked[1] } };
+});
+
+
+/* ==========================================================
+   通用引擎：答题流程、结果卡绘制、保存与复制
+   改文案请改上面的数据区，下面一般不需要动
+   ========================================================== */
+const $ = s => document.querySelector(s);
+const COL = QUIZ.colors;
+const FONT = '-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif';
+const F = (size, weight) => `${weight || 400} ${size}px ${FONT}`;
+const W = 1080, CX = 540, X0 = 140, CW = 800, START = 250;
+const NO_LINE_START = '，。！？、；：”’）」』》…,.!?;:)';
+const KEYS = 'ABCDEFG';
+const state = { answers: [], order: [], idx: 0, locked: false, result: null, img: '' };
+
+function shuffle(a) {
+  a = a.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('#' + id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function store(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+const pct = (v, max) => Math.round(v / max * 100);
+
+/* ---------- 答题 ---------- */
+function startQuiz() {
+  state.answers = new Array(QUESTIONS.length).fill(null);
+  state.order = QUESTIONS.map(q => { const ix = q.opts.map((_, i) => i); return QUIZ.shuffle ? shuffle(ix) : ix; });
+  state.idx = 0; state.locked = false;
+  show('quiz'); renderQ();
+}
+function renderQ() {
+  const i = state.idx, q = QUESTIONS[i];
+  $('#qNum').textContent = `${i + 1}/${QUESTIONS.length}`;
+  $('#qBar').style.width = ((i + 1) / QUESTIONS.length * 100) + '%';
+  $('#qText').textContent = q.q;
+  const box = $('#qOpts'); box.innerHTML = '';
+  state.order[i].forEach((oi, pos) => {
+    const b = document.createElement('button');
+    b.className = 'opt' + (state.answers[i] === oi ? ' sel' : '');
+    b.innerHTML = `<span class="k">${KEYS[pos]}</span><span></span>`;
+    b.lastChild.textContent = q.opts[oi].t;
+    b.addEventListener('click', () => choose(oi, b));
+    box.appendChild(b);
+  });
+  const w = $('#qWrap'); w.classList.remove('anim'); void w.offsetWidth; w.classList.add('anim');
+}
+/* 防连点：选中后到切题完成之前，其他点击一律忽略 */
+function choose(oi, el) {
+  if (state.locked) return;
+  state.locked = true;
+  state.answers[state.idx] = oi;
+  document.querySelectorAll('#qOpts .opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  setTimeout(() => {
+    if (state.idx < QUESTIONS.length - 1) { state.idx++; renderQ(); }
+    else finish();
+    state.locked = false;
+  }, 300);
+}
+function goBack() {
+  if (state.locked) return;
+  if (state.idx > 0) { state.idx--; renderQ(); } else show('home');
+}
+/* 结算前检查漏答：有漏答就跳回那一题 */
+function finish() {
+  const miss = state.answers.findIndex(a => a == null);
+  if (miss >= 0) { state.idx = miss; renderQ(); toast(`第 ${miss + 1} 题还没选，补上再看结果`); return; }
+  showResult(QUIZ.score(state.answers));
+}
+function showResult(r) {
+  state.result = r;
+  state.img = renderCard(QUIZ.cardHead, QUIZ.blocks(r)).toDataURL('image/png');
+  $('#resultImg').src = state.img;
+  if (QUIZ.onResult) QUIZ.onResult(r);
+  show('result');
+}
+
+/* ---------- 结果卡绘制（canvas，宽 1080） ---------- */
+function rr(ctx, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function dot(ctx, x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); }
+/* 中文逐字换行，标点不放在行首 */
+function wrap(ctx, text, maxW) {
+  const lines = []; let cur = '';
+  for (const ch of text) {
+    if (ch === '\n') { lines.push(cur); cur = ''; continue; }
+    const test = cur + ch;
+    if (ctx.measureText(test).width > maxW && cur && !NO_LINE_START.includes(ch)) { lines.push(cur); cur = ch; }
+    else cur = test;
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+function head(ctx, title, y, draw) {
+  if (draw) {
+    ctx.fillStyle = COL.accent; rr(ctx, X0, y + 6, 8, 34, 4); ctx.fill();
+    ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+    ctx.font = F(36, 700); ctx.fillStyle = COL.ink; ctx.fillText(title, X0 + 26, y);
+  }
+  return y + 64;
+}
+
+/* 每种区块：先量高度（draw=false），再真正画（draw=true） */
+const BLOCK = {
+  gap(ctx, b, y) { return y + b.h; },
+  divider(ctx, b, y, draw) {
+    if (draw) { ctx.fillStyle = COL.line; ctx.fillRect(X0, y + 40, CW, 2); }
+    return y + 84;
+  },
+  text(ctx, b, y, draw) {
+    const size = b.size || 34, lh = Math.round(size * (b.lh || 1.75));
+    ctx.font = F(size, b.weight || 400);
+    const lines = wrap(ctx, b.text, CW);
+    if (draw) {
+      ctx.fillStyle = b.color || COL.ink; ctx.textBaseline = 'top';
+      ctx.textAlign = b.align === 'center' ? 'center' : 'left';
+      lines.forEach((l, i) => ctx.fillText(l, b.align === 'center' ? CX : X0, y + i * lh + (lh - size) / 2));
+    }
+    return y + lines.length * lh;
+  },
+  big(ctx, b, y, draw) {
+    return BLOCK.text(ctx, { text: b.text, size: b.size || 84, weight: 800, color: b.color || COL.accent, align: 'center', lh: 1.3 }, y, draw);
+  },
+  /* 印章：一个圆里放一个字 */
+  seal(ctx, b, y, draw) {
+    const R = 104, cy = y + R + 18;
+    if (draw) {
+      ctx.fillStyle = COL.soft; dot(ctx, CX, cy, R + 18);
+      ctx.fillStyle = COL.accent; dot(ctx, CX, cy, R);
+      ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = F(b.text.length > 1 ? 72 : 112, 800);
+      ctx.fillText(b.text, CX, cy + 4);
+    }
+    return y + (R + 18) * 2 + 20;
+  },
+  tags(ctx, b, y, draw) {
+    const H = 62, PX = 28, G = 16;
+    ctx.font = F(30, 600);
+    const rows = [[]]; let w = 0;
+    b.items.forEach(it => {
+      const iw = ctx.measureText(it).width + PX * 2;
+      if (w + iw > CW && rows[rows.length - 1].length) { rows.push([]); w = 0; }
+      rows[rows.length - 1].push({ it, iw }); w += iw + G;
+    });
+    if (draw) rows.forEach((r, ri) => {
+      const tw = r.reduce((s, p) => s + p.iw, 0) + G * (r.length - 1);
+      let x = CX - tw / 2; const ty = y + ri * (H + G);
+      r.forEach(p => {
+        ctx.fillStyle = COL.soft; rr(ctx, x, ty, p.iw, H, H / 2); ctx.fill();
+        ctx.fillStyle = COL.accent; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(p.it, x + p.iw / 2, ty + H / 2 + 1);
+        x += p.iw + G;
+      });
+    });
+    return y + rows.length * (H + G) - G;
+  },
+  section(ctx, b, y, draw) {
+    y = head(ctx, b.title, y, draw);
+    return BLOCK.text(ctx, { text: b.text, size: 32, color: COL.ink2 }, y, draw) + 44;
+  },
+  list(ctx, b, y, draw) {
+    y = head(ctx, b.title, y, draw);
+    const lh = 56;
+    b.items.forEach(it => {
+      ctx.font = F(32);
+      const lines = wrap(ctx, it, CW - 40);
+      if (draw) {
+        ctx.fillStyle = COL.accent; dot(ctx, X0 + 10, y + lh / 2, 6);
+        ctx.fillStyle = COL.ink2; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+        lines.forEach((l, i) => ctx.fillText(l, X0 + 36, y + i * lh + (lh - 32) / 2));
+      }
+      y += lines.length * lh + 10;
+    });
+    return y + 34;
+  },
+  quote(ctx, b, y, draw) {
+    const pad = 44, lh = 58, labelH = b.label ? 52 : 0;
+    ctx.font = F(34, 600);
+    const lines = wrap(ctx, b.text, CW - pad * 2);
+    const H = pad * 2 + labelH + lines.length * lh - 10;
+    if (draw) {
+      ctx.fillStyle = COL.soft; rr(ctx, X0, y, CW, H, 28); ctx.fill();
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      if (b.label) { ctx.font = F(26, 600); ctx.fillStyle = COL.muted; ctx.fillText(b.label, CX, y + pad - 8); }
+      ctx.font = F(34, 600); ctx.fillStyle = COL.accent;
+      lines.forEach((l, i) => ctx.fillText(l, CX, y + pad + labelH + i * lh + (lh - 34) / 2 - 6));
+    }
+    return y + H + 44;
+  },
+  /* 横向条形：items = [{label, right, value(0~1), hi}] */
+  bars(ctx, b, y, draw) {
+    if (b.title) y = head(ctx, b.title, y, draw) + 6;
+    b.items.forEach(it => {
+      if (draw) {
+        ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+        ctx.font = F(30, it.hi ? 700 : 500); ctx.fillStyle = it.hi ? COL.ink : COL.ink2;
+        ctx.fillText(it.label, X0, y);
+        ctx.textAlign = 'right'; ctx.fillStyle = it.hi ? COL.accent : COL.muted;
+        ctx.fillText(it.right, X0 + CW, y);
+        const ty = y + 52;
+        ctx.fillStyle = COL.line; rr(ctx, X0, ty, CW, 14, 7); ctx.fill();
+        ctx.globalAlpha = it.hi ? 1 : 0.45;
+        ctx.fillStyle = COL.accent; rr(ctx, X0, ty, Math.max(14, CW * Math.min(1, it.value)), 14, 7); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      y += 100;
+    });
+    return y + 10;
+  },
+  score(ctx, b, y, draw) {
+    if (draw) {
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillStyle = COL.muted; ctx.font = F(30, 600); ctx.fillText(b.label, CX, y);
+      ctx.fillStyle = COL.accent; ctx.font = F(120, 800); ctx.fillText(b.value + '%', CX, y + 48);
+    }
+    return y + 48 + 132;
+  },
+  codebox(ctx, b, y, draw) {
+    ctx.font = F(28);
+    const hint = wrap(ctx, b.hint, CW - 100);
+    const H = 244 + hint.length * 46 + 40;
+    if (draw) {
+      ctx.fillStyle = COL.bg; rr(ctx, X0, y, CW, H, 28); ctx.fill();
+      ctx.setLineDash([12, 10]); ctx.strokeStyle = COL.accent; ctx.lineWidth = 3;
+      rr(ctx, X0, y, CW, H, 28); ctx.stroke(); ctx.setLineDash([]);
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillStyle = COL.muted; ctx.font = F(30, 600); ctx.fillText(b.label, CX, y + 48);
+      ctx.fillStyle = COL.accent; ctx.font = F(100, 800);
+      const cs = b.code.split('');
+      cs.forEach((ch, i) => ctx.fillText(ch, CX + (i - (cs.length - 1) / 2) * 112, y + 104));
+      ctx.fillStyle = COL.muted; ctx.font = F(28);
+      hint.forEach((l, i) => ctx.fillText(l, CX, y + 244 + i * 46));
+    }
+    return y + H;
+  },
+};
+Object.assign(BLOCK, QUIZ.customBlocks || {});
+
+function renderCard(title, blocks) {
+  const c = document.createElement('canvas');
+  c.width = W; c.height = 10;
+  let ctx = c.getContext('2d');
+  let y = START;
+  for (const b of blocks) y = BLOCK[b.t](ctx, b, y, false);
+  const cardBottom = y + 60, H = cardBottom + 150;
+  c.height = H; ctx = c.getContext('2d');
+  // 背景与顶部色带
+  ctx.fillStyle = COL.bg; ctx.fillRect(0, 0, W, H);
+  const g = ctx.createLinearGradient(0, 0, W, 340);
+  g.addColorStop(0, COL.g1); g.addColorStop(1, COL.g2);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, 340);
+  ctx.fillStyle = 'rgba(255,255,255,.12)';
+  dot(ctx, 970, 50, 170); dot(ctx, 70, 290, 90);
+  ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.font = F(38, 700); ctx.fillText(title, CX, 80);
+  // 白色卡片
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,.08)'; ctx.shadowBlur = 36; ctx.shadowOffsetY = 8;
+  ctx.fillStyle = COL.card; rr(ctx, 80, 170, 920, cardBottom - 170, 40); ctx.fill();
+  ctx.restore();
+  y = START;
+  for (const b of blocks) y = BLOCK[b.t](ctx, b, y, true);
+  ctx.fillStyle = COL.muted; ctx.font = F(26); ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText(QUIZ.footer, CX, cardBottom + 52);
+  return c;
+}
+
+/* ---------- 保存与复制 ---------- */
+/* 保存图片：优先触发下载，不支持时提示长按 */
+function saveImg(url, name) {
+  try {
+    const a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  } catch (e) {}
+  toast('如果没有自动保存，长按上面的图片即可保存');
+}
+/* 复制：剪贴板接口 → execCommand → 弹窗手动复制，三层备用 */
+async function copyText(t) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(t); toast('已复制'); return; }
+  } catch (e) {}
+  const ta = document.createElement('textarea');
+  ta.value = t; ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed'; ta.style.top = '-1000px'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, t.length);
+  let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+  ta.remove();
+  if (ok) { toast('已复制'); return; }
+  $('#manualText').value = t; $('#modal').classList.remove('hidden');
+  setTimeout(() => { $('#manualText').focus(); $('#manualText').select(); }, 50);
+}
+
+/* ---------- 作者预览：一次性看全部结果卡 ---------- */
+function openPreview() {
+  const box = $('#pvList'); box.innerHTML = '';
+  QUIZ.previews().forEach(p => {
+    const d = document.createElement('div'); d.className = 'pv-item';
+    const h = document.createElement('h3'); h.textContent = p.label;
+    const img = new Image(); img.className = 'result-img';
+    img.src = renderCard(QUIZ.cardHead, QUIZ.blocks(p.result)).toDataURL('image/png');
+    d.appendChild(h); d.appendChild(img); box.appendChild(d);
+  });
+  show('preview');
+}
+
+function init() {
+  $('#kicker').textContent = QUIZ.kicker;
+  $('#heroTitle').innerHTML = QUIZ.heroTitle;
+  $('#heroDesc').textContent = QUIZ.heroDesc;
+  $('#meta').innerHTML = QUIZ.meta.map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join('');
+  $('#note').textContent = QUIZ.note;
+  $('#startBtn').onclick = startQuiz;
+  $('#qBack').onclick = goBack;
+  $('#saveBtn').onclick = () => saveImg(state.img, QUIZ.fileName(state.result));
+  $('#copyBtn').onclick = () => copyText(QUIZ.copy(state.result));
+  $('#againBtn').onclick = startQuiz;
+  $('#authorBtn').onclick = openPreview;
+  $('#pvBack').onclick = () => show('home');
+  $('#modalClose').onclick = () => $('#modal').classList.add('hidden');
+  if (QUIZ.init) QUIZ.init();
+}
+if (typeof document !== 'undefined') init();
+
+</script>
+</body>
+</html>

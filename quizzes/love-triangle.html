@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>你们的爱情是什么形状？</title>
+<style>
+  :root{ --bg:#F8F0EC;--card:#FFFFFF;--ink:#3A2620;--ink2:#5E463E;--muted:#A58E85;--accent:#B8523A;--soft:#F5DFD7;--line:#EEDFD8;--g1:#CC6A4F;--g2:#8E3A29 }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{background:var(--bg)}
+  body{color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  #app{max-width:480px;margin:0 auto;min-height:100vh;padding:28px 16px 56px}
+  .screen{display:none}
+  .screen.active{display:block;animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* 首页 */
+  .hero{background:linear-gradient(150deg,var(--g1),var(--g2));color:#fff;border-radius:24px;padding:40px 24px 34px;margin-top:12px;position:relative;overflow:hidden}
+  .hero:after{content:"";position:absolute;right:-50px;top:-50px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.12)}
+  .hero .kicker{font-size:13px;opacity:.85;letter-spacing:2px}
+  .hero h1{font-size:31px;line-height:1.32;margin:10px 0 14px;position:relative}
+  .hero p{font-size:15px;opacity:.94;position:relative}
+  .meta{display:flex;gap:10px;margin:18px 0 24px}
+  .meta span{flex:1;background:var(--card);border-radius:14px;padding:12px 0;text-align:center;font-size:13px;color:var(--muted)}
+  .meta b{display:block;font-size:18px;color:var(--ink)}
+  .btn{display:block;width:100%;min-height:52px;border:none;border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;padding:0 12px}
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.soft{background:var(--soft);color:var(--accent)}
+  .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+  .btn + .btn{margin-top:12px}
+  .row{display:flex;gap:10px}
+  .row .btn{margin-top:0;flex:1;font-size:15px}
+  .note{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.7}
+  .author{display:block;margin:36px auto 0;background:none;border:none;color:var(--muted);font-size:12px;text-decoration:underline;font-family:inherit;cursor:pointer}
+
+  /* 答题页 */
+  .qhead{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+  .qback{border:0;background:var(--card);width:38px;height:38px;border-radius:50%;font-size:20px;color:var(--ink);cursor:pointer;flex:none;font-family:inherit}
+  .bar{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+  .count{font-size:13px;color:var(--muted);flex:none;min-width:44px;text-align:right}
+  #qWrap.anim{animation:fadeIn .28s ease}
+  .qtext{font-size:20px;font-weight:700;line-height:1.55;margin-bottom:22px}
+  .opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:15px 14px;margin-bottom:12px;font-size:15px;color:var(--ink);font-family:inherit;cursor:pointer;line-height:1.55;transition:border-color .15s,background .15s}
+  @media (hover:hover){.opt:hover{border-color:var(--accent)}}
+  .opt .k{flex:none;width:26px;height:26px;border-radius:50%;background:var(--soft);color:var(--accent);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .opt.sel{border-color:var(--accent);background:var(--soft)}
+  .opt.sel .k{background:var(--accent);color:#fff}
+
+  /* 结果页 */
+  .result-img{width:100%;border-radius:16px;display:block;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+  .tip{text-align:center;font-size:12px;color:var(--muted);margin:10px 0 18px}
+  .card{background:var(--card);border-radius:20px;padding:22px 18px;margin-top:20px}
+  .card h3{font-size:18px;margin-bottom:4px}
+  .muted{color:var(--muted)}
+  .small{font-size:13px}
+
+  /* 作者预览 */
+  .pv-item{margin-bottom:28px}
+  .pv-item h3{font-size:14px;color:var(--muted);font-weight:500;margin-bottom:8px}
+
+  #toast{position:fixed;left:50%;bottom:70px;transform:translateX(-50%);background:rgba(30,26,30,.9);color:#fff;padding:10px 18px;border-radius:22px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:20;max-width:86vw;text-align:center}
+  #toast.show{opacity:1}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:30;padding:20px}
+  .modal.hidden{display:none}
+  .modal-box{background:#fff;border-radius:16px;padding:20px;width:100%;max-width:420px}
+  .modal-box p{font-size:14px;color:var(--ink2);margin-bottom:10px}
+  .modal-box textarea{width:100%;height:160px;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px;font-family:inherit;margin-bottom:12px;resize:none}
+
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- 首页 -->
+  <section id="home" class="screen active">
+    <div class="hero">
+      <div class="kicker" id="kicker"></div>
+      <h1 id="heroTitle"></h1>
+      <p id="heroDesc"></p>
+    </div>
+    <div class="meta" id="meta"></div>
+    <button class="btn primary" id="startBtn">开始测试</button>
+    <div id="homeExtra"></div>
+    <div class="note" id="note"></div>
+    <button class="author" id="authorBtn">作者预览：查看全部结果卡</button>
+  </section>
+
+  <!-- 答题页 -->
+  <section id="quiz" class="screen">
+    <div class="qhead">
+      <button class="qback" id="qBack" aria-label="上一题">‹</button>
+      <div class="bar"><i id="qBar"></i></div>
+      <div class="count" id="qNum"></div>
+    </div>
+    <div id="qWrap">
+      <div class="qtext" id="qText"></div>
+      <div id="qOpts"></div>
+    </div>
+  </section>
+
+  <!-- 结果页 -->
+  <section id="result" class="screen">
+    <img class="result-img" id="resultImg" alt="测试结果">
+    <div class="tip">手机上长按图片可以直接保存</div>
+    <div class="row">
+      <button class="btn primary" id="saveBtn">保存图片</button>
+      <button class="btn soft" id="copyBtn">复制文案</button>
+      <button class="btn ghost" id="againBtn">再测一次</button>
+    </div>
+
+  </section>
+
+  <!-- 作者预览 -->
+  <section id="preview" class="screen">
+    <div class="qhead">
+      <button class="qback" id="pvBack" aria-label="返回">‹</button>
+      <div style="font-weight:600">全部结果卡预览</div>
+    </div>
+    <div id="pvList"></div>
+  </section>
+
+</div>
+
+<div id="toast"></div>
+<div class="modal hidden" id="modal">
+  <div class="modal-box">
+    <p>自动复制没有成功，请长按下面的文字，全选后复制</p>
+    <textarea id="manualText" readonly></textarea>
+    <button class="btn primary" id="modalClose">好的</button>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   数据区：改文案只需要改这里
+   爱情三角测试：斯滕伯格的爱情三角理论
+     I 亲密：懂不懂彼此、能不能交心
+     P 激情：心跳、吸引、身体上的靠近
+     C 承诺：愿不愿意一起走下去
+   每个维度 5 道题，每题 0~3 分，满分 15，8 分及以上算“高”。
+   三个维度高低组合，得到 8 种爱情形状。
+   ========================================================== */
+const QUIZ = {
+  kicker: '恋爱心理小测试',
+  heroTitle: '你们的爱情，<br>是什么形状？',
+  heroDesc: '想着你正在经历的这段感情（没有的话，就想最近的一段）。15 道题，从亲密、激情、承诺三个角，画出你们的爱情三角形。',
+  meta: [['15', '道题'], ['3', '分钟'], ['8', '种形状']],
+  note: '爱情三角理论来自心理学家罗伯特·斯滕伯格。这是趣味版，只反映你此刻的感受，感情的形状也会随时间变化。',
+  cardHead: '爱情三角测试',
+  footer: '爱情三角测试 · 长按图片保存',
+  shuffle: true,
+  colors: { bg: '#F8F0EC', card: '#FFFFFF', ink: '#3A2620', ink2: '#5E463E', muted: '#A58E85',
+    accent: '#B8523A', soft: '#F5DFD7', line: '#EEDFD8', g1: '#CC6A4F', g2: '#8E3A29' },
+};
+
+const DIMS = {
+  I: { name: '亲密', desc: '懂彼此' },
+  P: { name: '激情', desc: '会心动' },
+  C: { name: '承诺', desc: '想以后' },
+};
+const HIGH = 8, MAX = 15;
+
+/* s：选项分数，3 最高，0 最低 */
+const QUESTIONS = [
+  { d: 'I', q: '今天在公司受了委屈，回家路上你：', opts: [
+    { t: '已经在给 TA 打电话了', s: 3 }, { t: '打算见面再跟 TA 说', s: 2 },
+    { t: '想了想，还是不说了，TA 未必懂', s: 1 }, { t: '跟朋友吐槽完，TA 那边就不提了', s: 0 } ]},
+  { d: 'P', q: 'TA 的消息弹出来的那一刻：', opts: [
+    { t: '还是会心跳一下', s: 3 }, { t: '挺开心的', s: 2 },
+    { t: '看到了，等会儿再回', s: 1 }, { t: '有点烦', s: 0 } ]},
+  { d: 'C', q: '聊到明年的计划时：', opts: [
+    { t: '默认计划里就有 TA', s: 3 }, { t: '会考虑 TA 的安排', s: 2 },
+    { t: '先想自己的，再看 TA 能不能配合', s: 1 }, { t: '从没把 TA 算进去', s: 0 } ]},
+  { d: 'I', q: '你们平时聊天，都聊些什么？', opts: [
+    { t: '什么都聊，连很小很小的念头都会说', s: 3 }, { t: '聊日常，偶尔也会聊得很深', s: 2 },
+    { t: '主要是安排：吃什么、几点见', s: 1 }, { t: '越来越不知道该聊什么', s: 0 } ]},
+  { d: 'P', q: '你们上一次认真约会（打扮、订位、有期待）是：', opts: [
+    { t: '就在最近', s: 3 }, { t: '一两个月前', s: 2 },
+    { t: '想不起来了', s: 1 }, { t: '我们好像从来没有过', s: 0 } ]},
+  { d: 'C', q: '你们吵了一次很大的架：', opts: [
+    { t: '再生气，也没想过要分开', s: 3 }, { t: '闪过分手的念头，但很快就过去了', s: 2 },
+    { t: '认真想过要不要分', s: 1 }, { t: '每次吵架，都在想分手', s: 0 } ]},
+  { d: 'I', q: 'TA 了解你到什么程度？', opts: [
+    { t: '我皱一下眉，TA 就知道怎么回事', s: 3 }, { t: '大部分事都懂', s: 2 },
+    { t: '有些很重要的事，TA 还不知道', s: 1 }, { t: '感觉 TA 喜欢的是想象中的我', s: 0 } ]},
+  { d: 'P', q: '看着 TA 的时候：', opts: [
+    { t: '还是会觉得 TA 很有吸引力', s: 3 }, { t: '大部分时候是', s: 2 },
+    { t: '习惯了，不太会特别注意', s: 1 }, { t: '更多看到的是缺点', s: 0 } ]},
+  { d: 'C', q: '如果出现了一个更让你心动的人：', opts: [
+    { t: '不会动摇，我已经选好了', s: 3 }, { t: '会欣赏，但不会往前走', s: 2 },
+    { t: '说不好', s: 1 }, { t: '可能会重新考虑', s: 0 } ]},
+  { d: 'I', q: '两个人安安静静待在一起的时候：', opts: [
+    { t: '很舒服，不说话也不尴尬', s: 3 }, { t: '大多数时候挺舒服', s: 2 },
+    { t: '会有点想找话说', s: 1 }, { t: '沉默让人发慌', s: 0 } ]},
+  { d: 'P', q: '牵手、拥抱、亲吻这些：', opts: [
+    { t: '很多，自然而然', s: 3 }, { t: '有，但没有刚开始多', s: 2 },
+    { t: '偶尔，要特别的场合才有', s: 1 }, { t: '很少了', s: 0 } ]},
+  { d: 'C', q: '见家长、同居、一起存钱这类事：', opts: [
+    { t: '已经在做了，或者定好了时间', s: 3 }, { t: '聊过，大概有个方向', s: 2 },
+    { t: '偶尔提起，一直没说定', s: 1 }, { t: '一直在回避这个话题', s: 0 } ]},
+  { d: 'I', q: '你最狼狈的一面，TA 见过吗？', opts: [
+    { t: '见过，而且 TA 接住了', s: 3 }, { t: '见过一些', s: 2 },
+    { t: '尽量不让 TA 看到', s: 1 }, { t: '完全藏着', s: 0 } ]},
+  { d: 'P', q: '分开几天之后再见面：', opts: [
+    { t: '想第一时间扑过去', s: 3 }, { t: '很开心', s: 2 },
+    { t: '挺平静的', s: 1 }, { t: '其实分开那几天还挺自在', s: 0 } ]},
+  { d: 'C', q: '如果遇到大的困难，比如一方失业、生病或者要异地：', opts: [
+    { t: '一起扛，这没什么好犹豫的', s: 3 }, { t: '会努力撑过去', s: 2 },
+    { t: '要看是什么困难', s: 1 }, { t: '可能就散了', s: 0 } ]},
+];
+
+/* 键名三位：亲密、激情、承诺，1 为高，0 为低 */
+const TYPES = {
+  '111': { name: '满月', char: '满', sci: '完美之爱', tag: '三个角都在，而且都不小',
+    desc: '你们懂彼此，也还会为对方心动，同时愿意一起往前走。这是斯滕伯格心里最理想的爱情，也是最需要维护的一种：满月很美，但月亮每天都在变。',
+    precious: '三样东西你们都有，而且彼此撑着：亲密让激情不空洞，承诺让亲密不慌张。',
+    missing: '暂时什么都不缺。真正的挑战是日子久了，激情通常最先变淡。' },
+  '101': { name: '炉火', char: '炉', sci: '伴侣之爱', tag: '不烫手，但一直暖着',
+    desc: '你们像老朋友，也像家人，彼此信任，也打算一直走下去。只是心跳的感觉少了一些，日子过得温暖又平稳。很多长久的感情都会走到这里，这不是坏事。',
+    precious: '深度的信任和稳定的未来，这是很多人求而不得的。',
+    missing: '缺的是激情。不是没有爱了，而是忘了把对方当成一个值得去追的人。' },
+  '110': { name: '夏天', char: '夏', sci: '浪漫之爱', tag: '热烈又亲密，只是还没说以后',
+    desc: '你们很懂彼此，也很吸引彼此，在一起的每一天都很好。只是关于未来，你们还没想好，或者还不敢想。夏天很好，但总要面对秋天会不会来。',
+    precious: '又懂又爱，这种状态很难得，很多人一辈子都在找。',
+    missing: '缺的是承诺。不一定要马上谈婚论嫁，但至少要知道，你们是不是在往同一个方向走。' },
+  '011': { name: '闪电', char: '闪', sci: '愚昧之爱', tag: '心跳很快，决定也很快',
+    desc: '你们被彼此强烈吸引，也很快决定要在一起，甚至已经在谈以后。只是你们对彼此的了解，可能还跟不上感情推进的速度。理论里叫它“愚昧之爱”，听着难听，其实就是“太快了”。',
+    precious: '敢爱，也敢承诺。这份勇气本身很珍贵。',
+    missing: '缺的是亲密。在做更大的决定之前，先花点时间，真正认识一下对方。' },
+  '100': { name: '老友', char: '友', sci: '喜欢式爱', tag: '什么都能聊，就是不太心动',
+    desc: '你们聊得来，彼此信任，在一起很舒服。只是少了心跳，也还没想好要不要一起走下去。这种感觉更像好朋友，有人从这里慢慢走进爱情，也有人一直停在这里。',
+    precious: '真正的懂得和舒服，这是所有长久关系的地基。',
+    missing: '缺的是激情和承诺。先弄清楚：你是想要更多，还是这样就很好？' },
+  '010': { name: '烟花', char: '焰', sci: '迷恋式爱', tag: '心跳得很快，但还没走进心里',
+    desc: '你被 TA 强烈吸引，见面会心跳，分开会想念。可你们还不太了解彼此，也没谈过以后。这是很多爱情的开头，烟花很亮，能不能留下点什么，要看接下来。',
+    precious: '心动本身。它很珍贵，也很难装出来。',
+    missing: '缺的是亲密和承诺。试着多聊一聊烟花之外的东西：TA 害怕什么，想要什么。' },
+  '001': { name: '约定', char: '约', sci: '空洞之爱', tag: '说好了要在一起，心却有点远了',
+    desc: '你们还在一起，也打算继续在一起，但彼此的心好像隔着一段距离，心动的感觉也很少了。支撑这段关系的，更多是责任和习惯。它不一定是终点，很多感情会在这里重新开始。',
+    precious: '你们都没有放弃。这份坚持说明，这段关系对你们仍然重要。',
+    missing: '缺的是亲密和激情。先从小事找回说话的欲望，而不是一下子要找回全部。' },
+  '000': { name: '冬眠', char: '眠', sci: '无爱', tag: '三个角都缩起来了',
+    desc: '亲密、激情、承诺，现在都在低位。这不一定意味着结束，可能是你们都太累了，也可能是这段关系真的走到了需要认真聊一聊的地方。',
+    precious: '你愿意做这个测试，说明你还在意，还想看清楚。',
+    missing: '三个角都需要照顾。先问问自己：你还想不想要春天？' },
+};
+
+/* 补上缺的那一角，可以从这些小事开始 */
+const TIPS = {
+  I: ['每天留十分钟，只聊今天真实的感受，不聊安排', '把最近一件烦心事告诉 TA，哪怕你觉得 TA 帮不上忙', '问 TA 一个从没问过的问题，比如 TA 小时候最怕什么'],
+  P: ['安排一次认真的约会：打扮一下，去个新地方', '重新做一件刚在一起时常做的事', '多一点没有目的的触碰：出门前的拥抱，路上的牵手'],
+  C: ['一起聊聊明年：想去的地方、想存的钱、想过的日子', '把“我们”放进一个具体的计划里，比如一起存一笔旅行基金', '约好一条规矩：再生气，也不把“分手”挂在嘴边'],
+  keep: ['每个月至少一次认真的约会，别让日子只剩下日常', '有新鲜事，第一个想告诉的人还是 TA', '偶尔一起回忆刚认识的时候，再一起想想十年以后'],
+};
+
+QUIZ.score = answers => {
+  const s = { I: 0, P: 0, C: 0 };
+  QUESTIONS.forEach((q, i) => { s[q.d] += q.opts[answers[i]].s; });
+  return { s, key: ['I', 'P', 'C'].map(d => (s[d] >= HIGH ? 1 : 0)).join('') };
+};
+
+function tipsOf(r) {
+  const low = ['I', 'P', 'C'].filter(d => r.s[d] < HIGH).sort((a, b) => r.s[a] - r.s[b]);
+  if (!low.length) return TIPS.keep;
+  if (low.length === 1) return TIPS[low[0]];
+  return low.map(d => TIPS[d][0]);      // 缺好几个角时，每个角先给一件事
+}
+
+QUIZ.blocks = r => {
+  const T = TYPES[r.key];
+  return [
+    { t: 'text', text: '你们的爱情形状是', size: 32, color: COL.muted, align: 'center' },
+    { t: 'gap', h: 20 },
+    { t: 'seal', text: T.char },
+    { t: 'big', text: `「${T.name}」` },
+    { t: 'text', text: `${T.sci} · 斯滕伯格爱情三角理论`, size: 30, color: COL.muted, align: 'center' },
+    { t: 'gap', h: 18 },
+    { t: 'text', text: T.tag, size: 38, weight: 700, align: 'center' },
+    { t: 'gap', h: 40 },
+    { t: 'triangle', s: r.s },
+    { t: 'divider' },
+    { t: 'section', title: '你们现在的样子', text: T.desc },
+    { t: 'section', title: '你们最珍贵的', text: T.precious },
+    { t: 'section', title: '缺的那一角', text: T.missing },
+    { t: 'list', title: r.key === '111' ? '让满月一直亮着' : '可以从这些小事开始', items: tipsOf(r) },
+  ];
+};
+
+QUIZ.customBlocks = {
+  /* 三角形：上亲密、右下激情、左下承诺，外框是满分 */
+  triangle(ctx, b, y, draw) {
+    const R = 250, cx = CX, cy = y + 60 + R;
+    const ang = [-90, 30, 150].map(a => a * Math.PI / 180), keys = ['I', 'P', 'C'];
+    const pt = (i, v) => [cx + R * v * Math.cos(ang[i]), cy + R * v * Math.sin(ang[i])];
+    const poly = (vals, fill, stroke, w) => {
+      ctx.beginPath(); vals.forEach((v, i) => { const [x, yy] = pt(i, v); i ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy); }); ctx.closePath();
+      if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+      if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = w; ctx.stroke(); }
+    };
+    if (draw) {
+      poly([1, 1, 1], COL.bg, COL.line, 3);
+      ctx.setLineDash([8, 8]); poly([HIGH / MAX, HIGH / MAX, HIGH / MAX], null, COL.line, 2); ctx.setLineDash([]);
+      const vals = keys.map(k => Math.max(0.06, b.s[k] / MAX));
+      ctx.globalAlpha = 0.28; poly(vals, COL.accent); ctx.globalAlpha = 1;
+      poly(vals, null, COL.accent, 5);
+      vals.forEach((v, i) => { const [x, yy] = pt(i, v); ctx.fillStyle = COL.accent; dot(ctx, x, yy, 11); ctx.fillStyle = '#fff'; dot(ctx, x, yy, 4); });
+      keys.forEach((k, i) => {
+        const [x, yy] = pt(i, 1), hi = b.s[k] >= HIGH;
+        ctx.textAlign = i === 0 ? 'center' : (i === 1 ? 'left' : 'right');
+        const tx = x + (i === 0 ? 0 : i === 1 ? 10 : -10), ty = i === 0 ? yy - 56 : yy + 20;
+        ctx.textBaseline = 'top'; ctx.font = F(32, 700); ctx.fillStyle = hi ? COL.accent : COL.muted;
+        ctx.fillText(`${DIMS[k].name} ${pct(b.s[k], MAX)}%`, tx, i === 0 ? ty - 10 : ty);
+        ctx.font = F(24); ctx.fillStyle = COL.muted;
+        ctx.fillText(DIMS[k].desc, tx, i === 0 ? ty + 30 : ty + 42);
+      });
+    }
+    return cy + R * 0.5 + 100;
+  },
+};
+
+QUIZ.copy = r => {
+  const T = TYPES[r.key];
+  return `我测了「爱情三角」，我们的爱情形状是「${T.name}」（${T.sci}）：${T.tag}。\n\n亲密 ${pct(r.s.I, MAX)}% ｜ 激情 ${pct(r.s.P, MAX)}% ｜ 承诺 ${pct(r.s.C, MAX)}%\n\n${T.desc}\n\n我们最珍贵的：${T.precious}\n缺的那一角：${T.missing}\n可以从这些小事开始：${tipsOf(r).join('；')}`;
+};
+QUIZ.fileName = r => `爱情三角-${TYPES[r.key].name}.png`;
+QUIZ.previews = () => ['111', '101', '110', '011', '100', '010', '001', '000'].map(key => {
+  const s = {}; ['I', 'P', 'C'].forEach((d, i) => { s[d] = key[i] === '1' ? 11 + i : 4 + i; });
+  return { label: `${TYPES[key].name}（${TYPES[key].sci}）`, result: { s, key } };
+});
+
+
+/* ==========================================================
+   通用引擎：答题流程、结果卡绘制、保存与复制
+   改文案请改上面的数据区，下面一般不需要动
+   ========================================================== */
+const $ = s => document.querySelector(s);
+const COL = QUIZ.colors;
+const FONT = '-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif';
+const F = (size, weight) => `${weight || 400} ${size}px ${FONT}`;
+const W = 1080, CX = 540, X0 = 140, CW = 800, START = 250;
+const NO_LINE_START = '，。！？、；：”’）」』》…,.!?;:)';
+const KEYS = 'ABCDEFG';
+const state = { answers: [], order: [], idx: 0, locked: false, result: null, img: '' };
+
+function shuffle(a) {
+  a = a.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('#' + id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function store(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+const pct = (v, max) => Math.round(v / max * 100);
+
+/* ---------- 答题 ---------- */
+function startQuiz() {
+  state.answers = new Array(QUESTIONS.length).fill(null);
+  state.order = QUESTIONS.map(q => { const ix = q.opts.map((_, i) => i); return QUIZ.shuffle ? shuffle(ix) : ix; });
+  state.idx = 0; state.locked = false;
+  show('quiz'); renderQ();
+}
+function renderQ() {
+  const i = state.idx, q = QUESTIONS[i];
+  $('#qNum').textContent = `${i + 1}/${QUESTIONS.length}`;
+  $('#qBar').style.width = ((i + 1) / QUESTIONS.length * 100) + '%';
+  $('#qText').textContent = q.q;
+  const box = $('#qOpts'); box.innerHTML = '';
+  state.order[i].forEach((oi, pos) => {
+    const b = document.createElement('button');
+    b.className = 'opt' + (state.answers[i] === oi ? ' sel' : '');
+    b.innerHTML = `<span class="k">${KEYS[pos]}</span><span></span>`;
+    b.lastChild.textContent = q.opts[oi].t;
+    b.addEventListener('click', () => choose(oi, b));
+    box.appendChild(b);
+  });
+  const w = $('#qWrap'); w.classList.remove('anim'); void w.offsetWidth; w.classList.add('anim');
+}
+/* 防连点：选中后到切题完成之前，其他点击一律忽略 */
+function choose(oi, el) {
+  if (state.locked) return;
+  state.locked = true;
+  state.answers[state.idx] = oi;
+  document.querySelectorAll('#qOpts .opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  setTimeout(() => {
+    if (state.idx < QUESTIONS.length - 1) { state.idx++; renderQ(); }
+    else finish();
+    state.locked = false;
+  }, 300);
+}
+function goBack() {
+  if (state.locked) return;
+  if (state.idx > 0) { state.idx--; renderQ(); } else show('home');
+}
+/* 结算前检查漏答：有漏答就跳回那一题 */
+function finish() {
+  const miss = state.answers.findIndex(a => a == null);
+  if (miss >= 0) { state.idx = miss; renderQ(); toast(`第 ${miss + 1} 题还没选，补上再看结果`); return; }
+  showResult(QUIZ.score(state.answers));
+}
+function showResult(r) {
+  state.result = r;
+  state.img = renderCard(QUIZ.cardHead, QUIZ.blocks(r)).toDataURL('image/png');
+  $('#resultImg').src = state.img;
+  if (QUIZ.onResult) QUIZ.onResult(r);
+  show('result');
+}
+
+/* ---------- 结果卡绘制（canvas，宽 1080） ---------- */
+function rr(ctx, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function dot(ctx, x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); }
+/* 中文逐字换行，标点不放在行首 */
+function wrap(ctx, text, maxW) {
+  const lines = []; let cur = '';
+  for (const ch of text) {
+    if (ch === '\n') { lines.push(cur); cur = ''; continue; }
+    const test = cur + ch;
+    if (ctx.measureText(test).width > maxW && cur && !NO_LINE_START.includes(ch)) { lines.push(cur); cur = ch; }
+    else cur = test;
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+function head(ctx, title, y, draw) {
+  if (draw) {
+    ctx.fillStyle = COL.accent; rr(ctx, X0, y + 6, 8, 34, 4); ctx.fill();
+    ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+    ctx.font = F(36, 700); ctx.fillStyle = COL.ink; ctx.fillText(title, X0 + 26, y);
+  }
+  return y + 64;
+}
+
+/* 每种区块：先量高度（draw=false），再真正画（draw=true） */
+const BLOCK = {
+  gap(ctx, b, y) { return y + b.h; },
+  divider(ctx, b, y, draw) {
+    if (draw) { ctx.fillStyle = COL.line; ctx.fillRect(X0, y + 40, CW, 2); }
+    return y + 84;
+  },
+  text(ctx, b, y, draw) {
+    const size = b.size || 34, lh = Math.round(size * (b.lh || 1.75));
+    ctx.font = F(size, b.weight || 400);
+    const lines = wrap(ctx, b.text, CW);
+    if (draw) {
+      ctx.fillStyle = b.color || COL.ink; ctx.textBaseline = 'top';
+      ctx.textAlign = b.align === 'center' ? 'center' : 'left';
+      lines.forEach((l, i) => ctx.fillText(l, b.align === 'center' ? CX : X0, y + i * lh + (lh - size) / 2));
+    }
+    return y + lines.length * lh;
+  },
+  big(ctx, b, y, draw) {
+    return BLOCK.text(ctx, { text: b.text, size: b.size || 84, weight: 800, color: b.color || COL.accent, align: 'center', lh: 1.3 }, y, draw);
+  },
+  /* 印章：一个圆里放一个字 */
+  seal(ctx, b, y, draw) {
+    const R = 104, cy = y + R + 18;
+    if (draw) {
+      ctx.fillStyle = COL.soft; dot(ctx, CX, cy, R + 18);
+      ctx.fillStyle = COL.accent; dot(ctx, CX, cy, R);
+      ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = F(b.text.length > 1 ? 72 : 112, 800);
+      ctx.fillText(b.text, CX, cy + 4);
+    }
+    return y + (R + 18) * 2 + 20;
+  },
+  tags(ctx, b, y, draw) {
+    const H = 62, PX = 28, G = 16;
+    ctx.font = F(30, 600);
+    const rows = [[]]; let w = 0;
+    b.items.forEach(it => {
+      const iw = ctx.measureText(it).width + PX * 2;
+      if (w + iw > CW && rows[rows.length - 1].length) { rows.push([]); w = 0; }
+      rows[rows.length - 1].push({ it, iw }); w += iw + G;
+    });
+    if (draw) rows.forEach((r, ri) => {
+      const tw = r.reduce((s, p) => s + p.iw, 0) + G * (r.length - 1);
+      let x = CX - tw / 2; const ty = y + ri * (H + G);
+      r.forEach(p => {
+        ctx.fillStyle = COL.soft; rr(ctx, x, ty, p.iw, H, H / 2); ctx.fill();
+        ctx.fillStyle = COL.accent; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(p.it, x + p.iw / 2, ty + H / 2 + 1);
+        x += p.iw + G;
+      });
+    });
+    return y + rows.length * (H + G) - G;
+  },
+  section(ctx, b, y, draw) {
+    y = head(ctx, b.title, y, draw);
+    return BLOCK.text(ctx, { text: b.text, size: 32, color: COL.ink2 }, y, draw) + 44;
+  },
+  list(ctx, b, y, draw) {
+    y = head(ctx, b.title, y, draw);
+    const lh = 56;
+    b.items.forEach(it => {
+      ctx.font = F(32);
+      const lines = wrap(ctx, it, CW - 40);
+      if (draw) {
+        ctx.fillStyle = COL.accent; dot(ctx, X0 + 10, y + lh / 2, 6);
+        ctx.fillStyle = COL.ink2; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+        lines.forEach((l, i) => ctx.fillText(l, X0 + 36, y + i * lh + (lh - 32) / 2));
+      }
+      y += lines.length * lh + 10;
+    });
+    return y + 34;
+  },
+  quote(ctx, b, y, draw) {
+    const pad = 44, lh = 58, labelH = b.label ? 52 : 0;
+    ctx.font = F(34, 600);
+    const lines = wrap(ctx, b.text, CW - pad * 2);
+    const H = pad * 2 + labelH + lines.length * lh - 10;
+    if (draw) {
+      ctx.fillStyle = COL.soft; rr(ctx, X0, y, CW, H, 28); ctx.fill();
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      if (b.label) { ctx.font = F(26, 600); ctx.fillStyle = COL.muted; ctx.fillText(b.label, CX, y + pad - 8); }
+      ctx.font = F(34, 600); ctx.fillStyle = COL.accent;
+      lines.forEach((l, i) => ctx.fillText(l, CX, y + pad + labelH + i * lh + (lh - 34) / 2 - 6));
+    }
+    return y + H + 44;
+  },
+  /* 横向条形：items = [{label, right, value(0~1), hi}] */
+  bars(ctx, b, y, draw) {
+    if (b.title) y = head(ctx, b.title, y, draw) + 6;
+    b.items.forEach(it => {
+      if (draw) {
+        ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+        ctx.font = F(30, it.hi ? 700 : 500); ctx.fillStyle = it.hi ? COL.ink : COL.ink2;
+        ctx.fillText(it.label, X0, y);
+        ctx.textAlign = 'right'; ctx.fillStyle = it.hi ? COL.accent : COL.muted;
+        ctx.fillText(it.right, X0 + CW, y);
+        const ty = y + 52;
+        ctx.fillStyle = COL.line; rr(ctx, X0, ty, CW, 14, 7); ctx.fill();
+        ctx.globalAlpha = it.hi ? 1 : 0.45;
+        ctx.fillStyle = COL.accent; rr(ctx, X0, ty, Math.max(14, CW * Math.min(1, it.value)), 14, 7); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      y += 100;
+    });
+    return y + 10;
+  },
+  score(ctx, b, y, draw) {
+    if (draw) {
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillStyle = COL.muted; ctx.font = F(30, 600); ctx.fillText(b.label, CX, y);
+      ctx.fillStyle = COL.accent; ctx.font = F(120, 800); ctx.fillText(b.value + '%', CX, y + 48);
+    }
+    return y + 48 + 132;
+  },
+  codebox(ctx, b, y, draw) {
+    ctx.font = F(28);
+    const hint = wrap(ctx, b.hint, CW - 100);
+    const H = 244 + hint.length * 46 + 40;
+    if (draw) {
+      ctx.fillStyle = COL.bg; rr(ctx, X0, y, CW, H, 28); ctx.fill();
+      ctx.setLineDash([12, 10]); ctx.strokeStyle = COL.accent; ctx.lineWidth = 3;
+      rr(ctx, X0, y, CW, H, 28); ctx.stroke(); ctx.setLineDash([]);
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillStyle = COL.muted; ctx.font = F(30, 600); ctx.fillText(b.label, CX, y + 48);
+      ctx.fillStyle = COL.accent; ctx.font = F(100, 800);
+      const cs = b.code.split('');
+      cs.forEach((ch, i) => ctx.fillText(ch, CX + (i - (cs.length - 1) / 2) * 112, y + 104));
+      ctx.fillStyle = COL.muted; ctx.font = F(28);
+      hint.forEach((l, i) => ctx.fillText(l, CX, y + 244 + i * 46));
+    }
+    return y + H;
+  },
+};
+Object.assign(BLOCK, QUIZ.customBlocks || {});
+
+function renderCard(title, blocks) {
+  const c = document.createElement('canvas');
+  c.width = W; c.height = 10;
+  let ctx = c.getContext('2d');
+  let y = START;
+  for (const b of blocks) y = BLOCK[b.t](ctx, b, y, false);
+  const cardBottom = y + 60, H = cardBottom + 150;
+  c.height = H; ctx = c.getContext('2d');
+  // 背景与顶部色带
+  ctx.fillStyle = COL.bg; ctx.fillRect(0, 0, W, H);
+  const g = ctx.createLinearGradient(0, 0, W, 340);
+  g.addColorStop(0, COL.g1); g.addColorStop(1, COL.g2);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, 340);
+  ctx.fillStyle = 'rgba(255,255,255,.12)';
+  dot(ctx, 970, 50, 170); dot(ctx, 70, 290, 90);
+  ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.font = F(38, 700); ctx.fillText(title, CX, 80);
+  // 白色卡片
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,.08)'; ctx.shadowBlur = 36; ctx.shadowOffsetY = 8;
+  ctx.fillStyle = COL.card; rr(ctx, 80, 170, 920, cardBottom - 170, 40); ctx.fill();
+  ctx.restore();
+  y = START;
+  for (const b of blocks) y = BLOCK[b.t](ctx, b, y, true);
+  ctx.fillStyle = COL.muted; ctx.font = F(26); ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText(QUIZ.footer, CX, cardBottom + 52);
+  return c;
+}
+
+/* ---------- 保存与复制 ---------- */
+/* 保存图片：优先触发下载，不支持时提示长按 */
+function saveImg(url, name) {
+  try {
+    const a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  } catch (e) {}
+  toast('如果没有自动保存，长按上面的图片即可保存');
+}
+/* 复制：剪贴板接口 → execCommand → 弹窗手动复制，三层备用 */
+async function copyText(t) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(t); toast('已复制'); return; }
+  } catch (e) {}
+  const ta = document.createElement('textarea');
+  ta.value = t; ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed'; ta.style.top = '-1000px'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, t.length);
+  let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+  ta.remove();
+  if (ok) { toast('已复制'); return; }
+  $('#manualText').value = t; $('#modal').classList.remove('hidden');
+  setTimeout(() => { $('#manualText').focus(); $('#manualText').select(); }, 50);
+}
+
+/* ---------- 作者预览：一次性看全部结果卡 ---------- */
+function openPreview() {
+  const box = $('#pvList'); box.innerHTML = '';
+  QUIZ.previews().forEach(p => {
+    const d = document.createElement('div'); d.className = 'pv-item';
+    const h = document.createElement('h3'); h.textContent = p.label;
+    const img = new Image(); img.className = 'result-img';
+    img.src = renderCard(QUIZ.cardHead, QUIZ.blocks(p.result)).toDataURL('image/png');
+    d.appendChild(h); d.appendChild(img); box.appendChild(d);
+  });
+  show('preview');
+}
+
+function init() {
+  $('#kicker').textContent = QUIZ.kicker;
+  $('#heroTitle').innerHTML = QUIZ.heroTitle;
+  $('#heroDesc').textContent = QUIZ.heroDesc;
+  $('#meta').innerHTML = QUIZ.meta.map(([n, l]) => `<span><b>${n}</b>${l}</span>`).join('');
+  $('#note').textContent = QUIZ.note;
+  $('#startBtn').onclick = startQuiz;
+  $('#qBack').onclick = goBack;
+  $('#saveBtn').onclick = () => saveImg(state.img, QUIZ.fileName(state.result));
+  $('#copyBtn').onclick = () => copyText(QUIZ.copy(state.result));
+  $('#againBtn').onclick = startQuiz;
+  $('#authorBtn').onclick = openPreview;
+  $('#pvBack').onclick = () => show('home');
+  $('#modalClose').onclick = () => $('#modal').classList.add('hidden');
+  if (QUIZ.init) QUIZ.init();
+}
+if (typeof document !== 'undefined') init();
+
+</script>
+</body>
+</html>
