@@ -31,4 +31,7 @@ include = ["memory_museum*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
-filterwarnings = ["ignore:Using `httpx` with `starlette.testclient`"]
+filterwarnings = [
+  "ignore:Using `httpx` with `starlette.testclient`",
+  "ignore:pkg_resources is deprecated:DeprecationWarning",
+]
