@@ -1,0 +1,36 @@
+{
+  "zh": {
+    "museumTitle": "我们的回忆馆",
+    "museumSubtitleEn": "Our Memory Museum",
+    "introLines": ["有些普通的一天，", "后来回头看才知道很重要。"],
+    "enterButton": "进入",
+    "randomDayTitle": "随机回到一天",
+    "soundMuseumTitle": "声音博物馆",
+    "soundMuseumIntro": "那些被保存下来的声音。",
+    "galleryTitle": "相册",
+    "timelineTitle": "时间线",
+    "favoritesTitle": "收藏",
+    "momentsTitle": "回忆片段",
+    "statsTitle": "我们的数字",
+    "statsIntro": "以下数字全部来自导入的真实记录。",
+    "emptyMuseum": "这里还是空的。导入聊天记录和照片之后，回忆会出现在这里。",
+    "footer": "只存在于这台电脑上。"
+  },
+  "en": {
+    "museumTitle": "Our Memory Museum",
+    "museumSubtitleEn": "我们的回忆馆",
+    "introLines": ["Some ordinary days", "turn out to matter most."],
+    "enterButton": "Enter",
+    "randomDayTitle": "Take me back",
+    "soundMuseumTitle": "Sound Museum",
+    "soundMuseumIntro": "The voices we kept.",
+    "galleryTitle": "Photos",
+    "timelineTitle": "Timeline",
+    "favoritesTitle": "Favorites",
+    "momentsTitle": "Moments",
+    "statsTitle": "Our numbers",
+    "statsIntro": "Every number here is calculated from imported records.",
+    "emptyMuseum": "Nothing here yet. Import chats and photos and your memories will appear.",
+    "footer": "Lives only on this computer."
+  }
+}

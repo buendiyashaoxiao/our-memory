@@ -1,0 +1,4 @@
+{"id": "b1", "time": "2025-09-30T23:40:00", "sender_id": "xia", "type": "text", "text": "最后一条测试"}
+{"id": "b2", "time": "2025-09-30T23:41:00", "sender_id": "yu", "text": "被截断的记
+not json at all
+{"id": "b3", "time": 1759247100, "sender_id": "yu", "type": "voice", "media": "voice_missing.m4a", "duration": 5}

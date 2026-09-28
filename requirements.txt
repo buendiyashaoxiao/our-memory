@@ -1,0 +1,14 @@
+# Runtime
+fastapi>=0.110
+uvicorn>=0.27
+pydantic>=2.5
+pillow>=10.0
+python-multipart>=0.0.9
+# Bundles a static ffmpeg binary (used when no system ffmpeg is installed)
+imageio-ffmpeg>=0.5
+# Better Chinese word statistics (optional; a built-in fallback is used if missing)
+jieba>=0.42
+
+# Tests
+pytest>=8
+httpx>=0.27
