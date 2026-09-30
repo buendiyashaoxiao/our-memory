@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>物理手写课 宣传片</title>
+<style>
+  @font-face { font-family: 'LXGW WenKai TC'; font-weight: 400; src: url(fonts/wenkai-400.ttf); }
+  @font-face { font-family: 'LXGW WenKai TC'; font-weight: 700; src: url(fonts/wenkai-700.ttf); }
+  @font-face { font-family: 'Ma Shan Zheng'; src: url(fonts/mashanzheng.ttf); }
+  :root {
+    --paper: #F4F5F7;
+    --grid: #DADDE3;
+    --ink: #2B2F36;
+    --blue: #2F6FD6;
+    --red: #E0453A;
+    --marker: #FFE27A;
+    --soft: #8A919C;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); }
+  body {
+    font-family: 'LXGW WenKai TC', 'WenQuanYi Zen Hei', sans-serif;
+    color: var(--ink);
+    position: relative;
+    background-image: radial-gradient(var(--grid) 2.2px, transparent 2.4px);
+    background-size: 40px 40px;
+    background-position: 20px 20px;
+  }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  .abs { position: absolute; }
+  .w { display: inline-block; white-space: nowrap; }  /* handwritten reveal */
+  .center { left: 0; right: 0; text-align: center; }
+  sub { font-size: 0.6em; vertical-align: -0.25em; }
+  .mk { background: linear-gradient(transparent 58%, var(--marker) 58%, var(--marker) 92%, transparent 92%); padding: 0 6px; }
+
+  /* top brand strip, shared */
+  #brand { position: absolute; top: 96px; left: 72px; right: 72px; display: flex; justify-content: space-between; align-items: center; font-size: 34px; color: var(--soft); }
+  #brand b { color: var(--blue); font-weight: 700; }
+  .tag { border: 3px solid var(--blue); color: var(--blue); border-radius: 40px; padding: 6px 22px; font-size: 32px; }
+
+  /* S1 hook */
+  #s1 .l1 { top: 560px; font-size: 120px; }
+  #s1 .l2 { top: 740px; font-size: 150px; font-weight: 700; }
+  #s1 .l3 { top: 950px; font-size: 120px; }
+  #s1 .red { color: var(--red); }
+  #s1 .under { top: 1110px; left: 250px; }
+
+  /* board */
+  #board svg { position: absolute; top: 250px; left: 0; }
+  .ln { fill: none; stroke: var(--ink); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+  .ln.b { stroke: var(--blue); }
+  .ln.r { stroke: var(--red); stroke-width: 9; }
+  .ln.thin { stroke-width: 4; }
+  .lab { font-size: 46px; fill: var(--ink); font-family: 'LXGW WenKai TC', serif; }
+  .lab.b { fill: var(--blue); }
+  .eq { left: 110px; font-size: 62px; }
+  .eq.b { color: var(--blue); }
+  .note { font-size: 44px; color: var(--red); }
+
+  /* S5 key box */
+  #key { position: absolute; left: 80px; right: 80px; top: 1040px; background: #fff; border: 5px solid var(--ink); border-radius: 28px; padding: 44px 50px; box-shadow: 12px 12px 0 var(--marker); }
+  #key .h { font-size: 44px; color: var(--blue); margin-bottom: 18px; }
+  #key .t { font-size: 60px; line-height: 1.45; font-weight: 700; }
+
+  /* S6 intro */
+  #s6 .big { top: 400px; font-size: 104px; font-weight: 700; line-height: 1.3; }
+  #s6 .item { left: 140px; font-size: 62px; }
+  #s6 .item i { font-style: normal; color: var(--blue); margin-right: 22px; }
+  #s6 .item span.s { color: var(--soft); font-size: 48px; margin-left: 18px; }
+  #s6 .foot { top: 1300px; font-size: 64px; }
+
+  /* S7 CTA */
+  #s7 .cta { top: 560px; font-size: 150px; font-family: 'Ma Shan Zheng', 'LXGW WenKai TC', serif; color: var(--ink); }
+  #s7 .acct { top: 860px; font-size: 72px; color: var(--blue); font-weight: 700; }
+  #s7 .chips { top: 1030px; display: flex; justify-content: center; gap: 26px; }
+  #s7 .chip { font-size: 44px; padding: 10px 32px; border-radius: 50px; background: #fff; border: 3px solid var(--ink); }
+  #s7 .btn { top: 1210px; left: 330px; width: 420px; height: 130px; border-radius: 70px; background: var(--red); color: #fff; font-size: 64px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+  /* captions */
+  #cap { position: absolute; left: 60px; right: 60px; top: 1560px; text-align: center; }
+  #cap span { display: inline-block; background: rgba(43,47,54,0.9); color: #fff; font-size: 46px; padding: 14px 34px; border-radius: 18px; line-height: 1.35; }
+
+  /* pen tip */
+  #pen { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 6px rgba(47,111,214,0.18); margin: -11px 0 0 -11px; opacity: 0; z-index: 10; }
+</style>
+</head>
+<body>
+<div id="brand"><span><b>一题一套路</b> · 高中物理</span><span class="tag">刚体转动</span></div>
+
+<!-- S1: hook -->
+<div class="scene" id="s1">
+  <div class="abs center l1"><span class="w" id="h1">这道题</span></div>
+  <div class="abs center l2"><span class="w red" id="h2">90% 的人</span></div>
+  <div class="abs center l3"><span class="w" id="h3">第一步就列错了</span></div>
+  <svg class="abs under" width="600" height="60"><path id="h4" class="ln r" d="M10 30 C 150 10, 300 50, 590 22"/></svg>
+</div>
+
+<!-- S2-S5: board -->
+<div class="scene" id="board">
+  <svg width="1080" height="720" viewBox="0 0 1080 720">
+    <!-- ceiling + hatch -->
+    <path class="ln draw" data-t="4.2,4.8" d="M390 30 L690 30"/>
+    <path class="ln thin draw" data-t="4.5,5.0" d="M410 30 L390 5 M450 30 L430 5 M490 30 L470 5 M530 30 L510 5 M570 30 L550 5 M610 30 L590 5 M650 30 L630 5 M690 30 L670 5"/>
+    <path class="ln draw" data-t="4.8,5.1" d="M540 30 L540 180"/>
+    <!-- pulley -->
+    <path class="ln draw" data-t="5.0,5.8" d="M540 70 A110 110 0 1 1 539.9 70"/>
+    <path class="ln draw" data-t="5.7,5.9" d="M540 172 A8 8 0 1 1 539.9 172"/>
+    <path class="ln b thin draw" data-t="5.9,6.2" d="M540 180 L650 180"/>
+    <text class="lab b wt" data-t="6.1" x="582" y="168">R</text>
+    <text class="lab wt" data-t="6.2" x="660" y="100">M</text>
+    <!-- rope -->
+    <path class="ln draw" data-t="6.3,7.2" d="M430 480 L430 180 A110 110 0 0 1 650 180 L650 400"/>
+    <!-- blocks -->
+    <path class="ln draw" data-t="7.1,7.6" d="M365 480 L495 480 L495 610 L365 610 Z"/>
+    <path class="ln draw" data-t="7.4,7.9" d="M600 400 L700 400 L700 500 L600 500 Z"/>
+    <text class="lab wt" data-t="7.7" x="398" y="562">m<tspan font-size="30" dy="10">1</tspan></text>
+    <text class="lab wt" data-t="7.9" x="622" y="470">m<tspan font-size="30" dy="10">2</tspan></text>
+    <!-- forces -->
+    <path class="ln b draw" data-t="8.3,8.8" d="M400 478 L400 380 M386 404 L400 380 L414 404"/>
+    <text class="lab b wt" data-t="8.7" x="318" y="410">T<tspan font-size="30" dy="10">1</tspan></text>
+    <path class="ln b draw" data-t="8.9,9.4" d="M430 612 L430 710 M416 686 L430 710 L444 686"/>
+    <text class="lab b wt" data-t="9.3" x="452" y="700">m<tspan font-size="30" dy="10">1</tspan><tspan dy="-10">g</tspan></text>
+    <path class="ln b draw" data-t="9.5,10.0" d="M680 398 L680 300 M666 324 L680 300 L694 324"/>
+    <text class="lab b wt" data-t="9.9" x="704" y="330">T<tspan font-size="30" dy="10">2</tspan></text>
+    <path class="ln b draw" data-t="10.1,10.6" d="M650 502 L650 600 M636 576 L650 600 L664 576"/>
+    <text class="lab b wt" data-t="10.5" x="672" y="596">m<tspan font-size="30" dy="10">2</tspan><tspan dy="-10">g</tspan></text>
+    <!-- alpha -->
+    <path class="ln r thin draw" data-t="10.8,11.4" d="M470 70 A150 150 0 0 0 400 150 M396 122 L400 150 L424 138" style="stroke-width:6"/>
+    <text class="lab wt" data-t="11.3" x="360" y="100" style="fill:var(--red)">α</text>
+  </svg>
+
+  <!-- wrong step -->
+  <div class="abs eq" id="wrong" style="top:1030px;left:300px;font-size:90px"><span class="w" id="wr1">T<sub>1</sub> = T<sub>2</sub> ?</span></div>
+  <svg class="abs" id="xmark" style="top:1010px;left:270px" width="520" height="160"><path id="x1" class="ln r" d="M20 20 L500 140 M500 20 L20 140"/></svg>
+  <div class="abs center note" style="top:1200px"><span class="w" id="wr2">滑轮有质量 → 两边拉力不相等！</span></div>
+
+  <!-- correct equations -->
+  <div class="abs eq" style="top:1000px"><span class="w" id="e1">① m<sub>1</sub>g − T<sub>1</sub> = m<sub>1</sub>a</span></div>
+  <div class="abs eq" style="top:1090px"><span class="w" id="e2">② T<sub>2</sub> − m<sub>2</sub>g = m<sub>2</sub>a</span></div>
+  <div class="abs eq b" style="top:1180px"><span class="w" id="e3">③ (T<sub>1</sub> − T<sub>2</sub>)R = ½MR²·α</span></div>
+  <div class="abs eq" style="top:1270px"><span class="w" id="e4">④ a = αR</span></div>
+  <div class="abs eq" style="top:1370px;left:90px;font-size:54px"><span class="w" id="e5">⇒ <span class="mk">a = (m<sub>1</sub>−m<sub>2</sub>)g ⁄ (m<sub>1</sub>+m<sub>2</sub>+M/2)</span></span></div>
+
+  <!-- key box -->
+  <div id="key">
+    <div class="h">✦ 一句话核心套路</div>
+    <div class="t">滑轮有质量，拉力就分两段；<br>平动列牛二，转动再补 <span class="mk">(T<sub>1</sub>−T<sub>2</sub>)R = Iα</span></div>
+  </div>
+</div>
+
+<!-- S6: intro -->
+<div class="scene" id="s6">
+  <div class="abs center big"><span class="w" id="i0">每期 3 分钟</span><br><span class="w" id="i0b">吃透一道<span class="mk">高频难题</span></span></div>
+  <div class="abs item" style="top:780px"><span class="w" id="i1"><i>✓</i>iPad 手写推导<span class="s">一笔一划</span></span></div>
+  <div class="abs item" style="top:900px"><span class="w" id="i2"><i>✓</i>先画受力图<span class="s">讲清为什么</span></span></div>
+  <div class="abs item" style="top:1020px"><span class="w" id="i3"><i>✓</i>一句话套路<span class="s">考场直接用</span></span></div>
+  <div class="abs center foot"><span class="w" id="i4">学生跟得上 · 家长看得懂</span></div>
+</div>
+
+<!-- S7: CTA -->
+<div class="scene" id="s7">
+  <div class="abs center cta">下一道题见</div>
+  <div class="abs center acct">@你的账号名</div>
+  <div class="abs center chips"><span class="chip">力学</span><span class="chip">电磁学</span><span class="chip">压轴题</span></div>
+  <div class="abs btn">+ 关注</div>
+</div>
+
+<div id="cap"><span id="capt"></span></div>
+<div id="pen"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const ease = p => p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+
+// scene visibility windows [in, out], with 0.4s fades
+const scenes = { s1: [0, 4.0], board: [4.0, 27.0], s6: [27.0, 33.2], s7: [33.2, 37.0] };
+
+// handwritten text reveals: id -> [start, end]
+const writes = {
+  h1: [0.2, 0.9], h2: [1.0, 1.9], h3: [2.0, 3.1],
+  wr1: [12.0, 13.0], wr2: [14.0, 15.3],
+  e1: [16.2, 17.2], e2: [17.3, 18.3], e3: [18.5, 19.9], e4: [20.0, 20.6], e5: [21.0, 22.8],
+  i0: [27.3, 28.0], i0b: [28.1, 29.0], i1: [29.3, 30.1], i2: [30.3, 31.1], i3: [31.3, 32.1], i4: [32.2, 33.0],
+};
+const draws = { h4: [3.1, 3.6], x1: [13.1, 13.7] };
+
+// caption lines = voiceover script
+const caps = [
+  [0.0, 4.0, '这道连串滑轮题，90% 的人第一步就列错了'],
+  [4.0, 8.2, '先别急着列方程，把图画出来'],
+  [8.2, 12.0, '每个物体，受力一个一个标清楚'],
+  [12.0, 16.0, '最常见的错：以为两边拉力一样大'],
+  [16.0, 20.0, '滑轮有质量，就得多列一个转动方程'],
+  [20.0, 23.2, '四个方程联立，加速度直接出来'],
+  [23.2, 27.0, '记住这一句，同类题全都能套'],
+  [27.0, 33.2, '每期一道难题，手写推导，一句话讲透'],
+  [33.2, 37.0, '关注我，下一道题见'],
+];
+
+const paths = [];
+function init() {
+  document.querySelectorAll('.draw, #h4, #x1').forEach(p => {
+    const L = p.getTotalLength();
+    p.style.strokeDasharray = L;
+    paths.push({ p, L, t: p.dataset.t ? p.dataset.t.split(',').map(Number) : draws[p.id] });
+  });
+}
+
+function render(t) {
+  for (const [id, [a, b]] of Object.entries(scenes)) {
+    const o = Math.min(prog(t, a - 0.001, a + 0.4), 1 - prog(t, b - 0.35, b));
+    $('#' + id).style.opacity = (a === 0 ? (t < b - 0.35 ? 1 : o) : o);
+  }
+  let pen = null;
+  for (const [id, [a, b]] of Object.entries(writes)) {
+    const el = $('#' + id), p = prog(t, a, b);
+    el.style.clipPath = `inset(-20% ${(1 - p) * 100}% -30% -5%)`;
+    if (p > 0 && p < 1) {
+      const r = el.getBoundingClientRect();
+      pen = [r.left + r.width * p, r.top + r.height * 0.62];
+    }
+  }
+  for (const { p, L, t: [a, b] } of paths) {
+    const k = ease(prog(t, a, b));
+    p.style.strokeDashoffset = L * (1 - k);
+    if (k > 0 && k < 1) {
+      const pt = p.getPointAtLength(L * k), m = p.getScreenCTM();
+      pen = [pt.x * m.a + m.e, pt.y * m.d + m.f];
+    }
+  }
+  document.querySelectorAll('.wt').forEach(el => el.style.opacity = prog(t, +el.dataset.t, +el.dataset.t + 0.25));
+
+  // wrong step: visible 12–15.9, then gone
+  const wrongO = 1 - prog(t, 15.6, 16.0);
+  ['#wrong', '#xmark', '#wr2'].forEach(s => $(s).style.opacity = wrongO);
+
+  // key box pops in 23.2, equations dim under it
+  const kp = ease(prog(t, 23.2, 23.7));
+  $('#key').style.opacity = kp;
+  $('#key').style.transform = `translateY(${(1 - kp) * 40}px) scale(${0.96 + 0.04 * kp})`;
+  document.querySelectorAll('#board .eq:not(#wrong)').forEach(e => e.style.opacity = 1 - kp);
+  $('#board svg').style.opacity = 1 - 0.5 * kp;
+
+  // CTA button pulse
+  const bp = Math.max(0, Math.sin((t - 34) * Math.PI * 1.6));
+  $('#s7 .btn').style.transform = `scale(${1 + 0.06 * bp * (t > 34 ? 1 : 0)})`;
+
+  const c = caps.find(([a, b]) => t >= a && t < b);
+  $('#capt').textContent = c ? c[2] : '';
+  $('#cap').style.opacity = c ? 1 : 0;
+
+  const pe = $('#pen');
+  pe.style.opacity = pen ? 1 : 0;
+  if (pen) { pe.style.left = pen[0] + 'px'; pe.style.top = pen[1] + 'px'; }
+}
+window.DURATION = 37.0;
+window.render = render;
+window.ready = Promise.all(["400 40px 'LXGW WenKai TC'", "700 40px 'LXGW WenKai TC'", "40px 'Ma Shan Zheng'"].map(f => document.fonts.load(f, '题'))).then(() => { init(); render(0); });
+
+// live preview when opened directly in a browser
+if (!new URLSearchParams(location.search).has('capture')) {
+  window.ready.then(() => {
+    const t0 = performance.now();
+    const loop = () => { render(((performance.now() - t0) / 1000) % window.DURATION); requestAnimationFrame(loop); };
+    loop();
+  });
+}
+</script>
+</body>
+</html>
