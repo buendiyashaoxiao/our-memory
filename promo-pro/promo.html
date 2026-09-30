@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Physics Promo</title>
+<style>
+  @font-face { font-family: 'Corm'; font-weight: 300; src: url(fonts/corm-300.ttf); }
+  @font-face { font-family: 'Corm'; font-weight: 500; src: url(fonts/corm-500.ttf); }
+  @font-face { font-family: 'Corm'; font-style: italic; font-weight: 400; src: url(fonts/corm-italic.ttf); }
+  @font-face { font-family: 'Inter'; font-weight: 300; src: url(fonts/inter-300.ttf); }
+  @font-face { font-family: 'Inter'; font-weight: 500; src: url(fonts/inter-500.ttf); }
+  @font-face { font-family: 'NotoSerifSC'; font-weight: 300; src: url(fonts/noto-300.ttf); }
+  @font-face { font-family: 'NotoSerifSC'; font-weight: 600; src: url(fonts/noto-600.ttf); }
+  @font-face { font-family: 'STIX'; src: url(fonts/stix.ttf); }
+  @font-face { font-family: 'STIX'; font-style: italic; src: url(fonts/stix-italic.ttf); }
+
+  :root { --bg: #04050A; --fg: #EDEFF5; --dim: #B3BACB; --cyan: #7FE6FF; --amber: #FFB866; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); color: var(--fg); }
+  canvas { position: absolute; inset: 0; }
+  .tx { position: absolute; left: 0; right: 0; text-align: center; opacity: 0; will-change: opacity, transform, filter; }
+  .en { font-family: 'Corm', serif; font-weight: 300; }
+  .it { font-family: 'Corm', serif; font-style: italic; }
+  .cn { font-family: 'NotoSerifSC', serif; font-weight: 300; letter-spacing: 0.18em; }
+  .cap { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 26px; letter-spacing: 0.5em; color: var(--dim); }
+  .eq { font-family: 'STIX', serif; font-style: italic; font-size: 92px; letter-spacing: 0.02em; }
+  .eq .u { font-style: normal; }
+  sub, sup { font-size: 0.55em; }
+  sub { vertical-align: -0.3em; } sup { vertical-align: 0.9em; }
+  .rule { display: block; width: 90px; height: 1px; background: rgba(237,239,245,0.45); margin: 0 auto; }
+  .num { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 26px; letter-spacing: 0.4em; color: var(--amber); }
+  #hud { position: absolute; top: 90px; left: 72px; right: 72px; display: flex; justify-content: space-between; font-family: 'Inter', sans-serif; font-weight: 300; font-size: 22px; letter-spacing: 0.4em; color: rgba(237,239,245,0.45); }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+
+<div id="hud"><span>PHYSICS · 物理</span><span id="tc">00:00</span></div>
+
+<!-- A · collision -->
+<div class="tx en" data-a="3.4" data-b="6.0" style="top:1330px;font-size:64px;line-height:1.25">The universe runs on<br><span class="it">a handful of equations.</span></div>
+<div class="tx cn" data-a="3.9" data-b="6.0" style="top:1520px;font-size:38px;color:var(--dim)">宇宙，只靠几条方程运转</div>
+
+<!-- B · mechanics -->
+<div class="tx cap" data-a="6.6" data-b="12.3" style="top:1300px">CLASSICAL MECHANICS</div>
+<div class="tx eq" data-a="7.0" data-b="12.3" style="top:1360px">F = G <span>m<sub>1</sub>m<sub>2</sub></span> / r<sup class="u">2</sup></div>
+<div class="tx cn" data-a="7.4" data-b="12.3" style="top:1530px;font-size:36px;color:var(--dim)">经典力学</div>
+
+<!-- C · E&M -->
+<div class="tx cap" data-a="12.9" data-b="18.5" style="top:1300px">ELECTRICITY &amp; MAGNETISM</div>
+<div class="tx eq" data-a="13.3" data-b="18.5" style="top:1360px"><span class="u">∇ · </span><b style="font-weight:700">E</b> = ρ / ε<sub class="u">0</sub></div>
+<div class="tx cn" data-a="13.7" data-b="18.5" style="top:1530px;font-size:36px;color:var(--dim)">电磁学</div>
+
+<!-- D · waves & quantum -->
+<div class="tx cap" data-a="19.1" data-b="24.7" style="top:1300px">WAVES &amp; QUANTUM</div>
+<div class="tx eq" data-a="19.5" data-b="24.7" style="top:1360px">iħ <span class="u">∂</span>ψ/<span class="u">∂</span>t = <span class="u">Ĥ</span>ψ</div>
+<div class="tx cn" data-a="19.9" data-b="24.7" style="top:1530px;font-size:36px;color:var(--dim)">波动与量子</div>
+
+<!-- E · title -->
+<div class="tx cn" data-a="26.6" data-b="31.0" style="top:900px;font-size:58px;font-weight:600;letter-spacing:0.5em;padding-left:0.5em">美高 · 美本物理</div>
+<div class="tx" data-a="27.4" data-b="31.0" style="top:1040px"><span class="rule"></span></div>
+<div class="tx en" data-a="27.8" data-b="31.0" style="top:1100px;font-size:50px;font-weight:500">AP Physics 1 · 2 · C</div>
+<div class="tx en" data-a="28.2" data-b="31.0" style="top:1180px;font-size:50px;font-weight:500">Honors Physics · IB HL</div>
+<div class="tx en" data-a="28.6" data-b="31.0" style="top:1260px;font-size:50px;font-weight:500">University Physics I &amp; II</div>
+<div class="tx it" data-a="29.0" data-b="31.0" style="top:1340px;font-size:44px;color:var(--dim)">Classical Mechanics · E&amp;M · Quantum</div>
+
+<!-- F · value -->
+<div class="tx" data-a="31.6" data-b="36.6" style="top:560px"><div class="num">01</div><div class="en" style="font-size:66px;margin-top:14px" ><span class="it">Intuition</span> before equations.</div><div class="cn" style="font-size:36px;color:var(--dim);margin-top:14px">先建立物理直觉，再推公式</div></div>
+<div class="tx" data-a="32.8" data-b="36.6" style="top:860px"><div class="num">02</div><div class="en" style="font-size:66px;margin-top:14px">English terms, <span class="it">clear logic.</span></div><div class="cn" style="font-size:36px;color:var(--dim);margin-top:14px">英文术语 · 中文讲透</div></div>
+<div class="tx" data-a="34.0" data-b="36.6" style="top:1160px"><div class="num">03</div><div class="en" style="font-size:66px;margin-top:14px">From AP to <span class="it">upper-division.</span></div><div class="cn" style="font-size:36px;color:var(--dim);margin-top:14px">从 AP 冲 5 分，到大学物理高年级课</div></div>
+
+<!-- G · CTA -->
+<div class="tx en" data-a="38.4" data-b="99" style="top:700px;font-size:104px;font-weight:300">Physics, <span class="it">understood.</span></div>
+<div class="tx cn" data-a="39.0" data-b="99" style="top:870px;font-size:44px">把物理，真正学懂</div>
+<div class="tx" data-a="39.6" data-b="99" style="top:1010px"><span class="rule"></span></div>
+<div class="tx" data-a="40.0" data-b="99" style="top:1070px;font-family:'Inter';font-weight:500;font-size:40px;letter-spacing:0.2em;color:var(--cyan)">@你的账号名</div>
+<div class="tx cap" data-a="40.4" data-b="99" style="top:1150px;font-size:24px">AP · IB · UNIVERSITY PHYSICS</div>
+
+<script>
+const W = 1080, H = 1920, CX = 540, CY = 800, DURATION = 43;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const easeOut = p => 1 - Math.pow(1 - p, 3);
+const easeInOut = p => p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const expo = p => p >= 1 ? 1 : 1 - Math.pow(2, -10 * p);
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+// fade window: in over `fi`, out over `fo`
+const win = (t, a, b, fi = 0.6, fo = 0.6) => Math.min(prog(t, a, a + fi), 1 - prog(t, b - fo, b));
+
+// glow sprites
+const COL = { cyan: [127, 230, 255], amber: [255, 184, 102], white: [255, 255, 255], violet: [170, 140, 255] };
+const spr = {};
+for (const [k, [r, g, b]] of Object.entries(COL)) {
+  const s = document.createElement('canvas'); s.width = s.height = 128;
+  const x = s.getContext('2d'), gr = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, `rgba(255,255,255,1)`); gr.addColorStop(0.12, `rgba(${r},${g},${b},0.9)`);
+  gr.addColorStop(0.4, `rgba(${r},${g},${b},0.22)`); gr.addColorStop(1, `rgba(${r},${g},${b},0)`);
+  x.fillStyle = gr; x.fillRect(0, 0, 128, 128); spr[k] = s;
+}
+const rgba = (c, a) => `rgba(${COL[c][0]},${COL[c][1]},${COL[c][2]},${a})`;
+function glow(x, y, r, c, a) { if (a <= 0.003) return; ctx.globalAlpha = Math.min(1, a); ctx.drawImage(spr[c], x - r, y - r, 2 * r, 2 * r); }
+
+// background dust + grain
+const R0 = rng(7);
+const stars = Array.from({ length: 260 }, () => ({ x: R0() * W, y: R0() * H, r: 0.5 + R0() * 1.4, ph: R0() * 6.28, d: 0.2 + R0() * 0.8 }));
+const grain = document.createElement('canvas'); grain.width = grain.height = 256;
+{ const g = grain.getContext('2d'), id = g.createImageData(256, 256); const R = rng(3);
+  for (let i = 0; i < id.data.length; i += 4) { const v = R() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255; }
+  g.putImageData(id, 0, 0); }
+
+// ---------- A · collision ----------
+const T0 = 2.6;
+const RA = rng(11);
+const sparks = Array.from({ length: 800 }, () => {
+  const th = RA() * Math.PI * 2, v = 150 + 1500 * Math.pow(RA(), 2.2);
+  return { cx: Math.cos(th), cy: Math.sin(th) * 0.92, v, k: 1.2 + RA() * 1.4, life: 1.6 + RA() * 2.6, s: 3 + RA() * 7, c: ['cyan', 'amber', 'white', 'white'][RA() * 4 | 0] };
+});
+const sparkPos = (p, u) => { const d = p.v * (1 - Math.exp(-p.k * u)) / p.k; return [CX + p.cx * d, CY + p.cy * d]; };
+// bubble-chamber tracks: charged particle with drag in uniform B -> logarithmic spiral
+const tracks = Array.from({ length: 44 }, () => {
+  const th = RA() * Math.PI * 2, v = 250 + 900 * RA(), w = (RA() < 0.5 ? -1 : 1) * (1.2 + 5 * RA()), k = 0.5 + 1.5 * RA();
+  return { th, v, w, k, c: w > 0 ? 'cyan' : 'amber' };
+});
+function trackPos(p, u) { // z(u) = v e^{iθ} (1 - e^{(-k+iω)u}) / (k - iω)
+  const e = Math.exp(-p.k * u), cr = 1 - e * Math.cos(p.w * u), ci = -e * Math.sin(p.w * u);
+  const dr = p.k, di = -p.w, den = dr * dr + di * di;
+  const qr = (cr * dr + ci * di) / den, qi = (ci * dr - cr * di) / den;
+  const vr = p.v * Math.cos(p.th), vi = p.v * Math.sin(p.th);
+  return [CX + vr * qr - vi * qi, CY + vr * qi + vi * qr];
+}
+function incoming(t, side) {
+  const s = Math.pow(prog(t, 0.4, T0), 2.2);
+  const x0 = side < 0 ? -80 : W + 80, y0 = CY + side * 260;
+  return [x0 + (CX - x0) * s, y0 + (CY - y0) * s - Math.sin(s * Math.PI) * 60 * side];
+}
+function sceneA(t, A) {
+  if (A <= 0) return;
+  ctx.globalCompositeOperation = 'lighter';
+  if (t < T0) {
+    for (const side of [-1, 1]) {
+      const c = side < 0 ? 'cyan' : 'amber';
+      for (let i = 24; i >= 0; i--) { const [x, y] = incoming(t - i * 0.018, side); glow(x, y, 26 - i * 0.8, c, A * (1 - i / 25) * 0.55); }
+      const [x, y] = incoming(t, side); glow(x, y, 60, c, A); glow(x, y, 16, 'white', A);
+    }
+    return;
+  }
+  const u = t - T0;
+  // flash + shockwave
+  glow(CX, CY, 80 + 1100 * Math.sqrt(prog(u, 0, 0.9)), 'white', A * (1 - prog(u, 0, 0.9)) * 1.2);
+  glow(CX, CY, 140, 'amber', A * (1 - prog(u, 0, 2.5)) * 0.8);
+  for (const [dl, c] of [[0, 'cyan'], [0.12, 'violet']]) {
+    const q = prog(u - dl, 0, 1.8);
+    if (q > 0 && q < 1) { ctx.globalAlpha = A * (1 - q) * 0.7; ctx.strokeStyle = rgba(c, 1); ctx.lineWidth = 3 * (1 - q) + 0.5;
+      ctx.beginPath(); ctx.ellipse(CX, CY, 1300 * easeOut(q), 1200 * easeOut(q), 0, 0, Math.PI * 2); ctx.stroke(); }
+  }
+  // spiral tracks
+  ctx.lineWidth = 1.6;
+  for (const p of tracks) {
+    const a = A * (1 - prog(u, 1.5, 3.4)) * 0.75; if (a <= 0) continue;
+    ctx.strokeStyle = rgba(p.c, 1); ctx.globalAlpha = a; ctx.beginPath();
+    const end = Math.min(u, 3.4);
+    for (let s = 0; s <= end; s += 0.015) { const [x, y] = trackPos(p, s); s === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+    ctx.stroke();
+    const [hx, hy] = trackPos(p, end); glow(hx, hy, 10, p.c, a);
+  }
+  // sparks with motion streaks
+  for (const p of sparks) {
+    const a = A * (1 - prog(u, 0, p.life)); if (a <= 0) continue;
+    const [x, y] = sparkPos(p, u), [x2, y2] = sparkPos(p, Math.max(0, u - 0.07));
+    ctx.globalAlpha = a * 0.8; ctx.strokeStyle = rgba(p.c, 1); ctx.lineWidth = p.s * 0.28;
+    ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x, y); ctx.stroke();
+    glow(x, y, p.s, p.c, a * 0.9);
+  }
+}
+
+// ---------- B · orbits (Kepler) ----------
+const orbits = [
+  { a: 150, e: 0.18, rot: 0.3, T: 2.4, M0: 0.0, c: 'cyan', s: 22 },
+  { a: 250, e: 0.32, rot: 2.1, T: 4.6, M0: 2.0, c: 'white', s: 26 },
+  { a: 350, e: 0.12, rot: 4.0, T: 7.2, M0: 4.1, c: 'amber', s: 34 },
+  { a: 450, e: 0.48, rot: 1.0, T: 9.8, M0: 1.0, c: 'violet', s: 24 },
+];
+function orbitXY(o, E) {
+  const b = o.a * Math.sqrt(1 - o.e * o.e), x = o.a * (Math.cos(E) - o.e), y = b * Math.sin(E) * 0.62; // tilted plane
+  return [CX + x * Math.cos(o.rot * 0.25) - y * Math.sin(o.rot * 0.25), CY + x * Math.sin(o.rot * 0.25) + y * Math.cos(o.rot * 0.25)];
+}
+function kepler(o, t) { const M = o.M0 + 2 * Math.PI * t / o.T; let E = M; for (let i = 0; i < 6; i++) E -= (E - o.e * Math.sin(E) - M) / (1 - o.e * Math.cos(E)); return E; }
+function sceneB(t, A) {
+  if (A <= 0) return;
+  ctx.globalCompositeOperation = 'lighter';
+  const pulse = 1 + 0.05 * Math.sin(t * 3);
+  glow(CX, CY, 260 * pulse, 'amber', A * 0.55); glow(CX, CY, 70, 'white', A);
+  orbits.forEach((o, i) => {
+    const rp = easeInOut(prog(t, 6.4 + i * 0.25, 7.8 + i * 0.25));
+    ctx.globalAlpha = A * 0.22; ctx.strokeStyle = rgba(o.c, 1); ctx.lineWidth = 1.2; ctx.beginPath();
+    for (let k = 0; k <= 200 * rp; k++) { const [x, y] = orbitXY(o, k / 200 * Math.PI * 2 * rp + o.M0); k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+    ctx.stroke();
+    if (rp < 0.2) return;
+    const ap = A * prog(rp, 0.2, 0.6);
+    for (let k = 40; k >= 0; k--) { const [x, y] = orbitXY(o, kepler(o, t - k * o.T * 0.006)); glow(x, y, o.s * 0.5 * (1 - k / 44), o.c, ap * (1 - k / 41) * 0.35); }
+    const [x, y] = orbitXY(o, kepler(o, t)); glow(x, y, o.s * 1.6, o.c, ap); glow(x, y, o.s * 0.35, 'white', ap);
+  });
+}
+
+// ---------- C · dipole field ----------
+const QP = [340, CY], QN = [740, CY];
+const fieldLines = [];
+for (let i = 0; i < 22; i++) {
+  const th = (i + 0.5) / 22 * Math.PI * 2; let x = QP[0] + 18 * Math.cos(th), y = QP[1] + 18 * Math.sin(th);
+  const pts = [[x, y]], len = [0];
+  for (let s = 0; s < 1400; s++) {
+    const dx1 = x - QP[0], dy1 = y - QP[1], r1 = Math.hypot(dx1, dy1), dx2 = x - QN[0], dy2 = y - QN[1], r2 = Math.hypot(dx2, dy2);
+    let ex = dx1 / r1 ** 3 - dx2 / r2 ** 3, ey = dy1 / r1 ** 3 - dy2 / r2 ** 3; const m = Math.hypot(ex, ey);
+    x += 4 * ex / m; y += 4 * ey / m; pts.push([x, y]); len.push(len[len.length - 1] + 4);
+    if (r2 < 18 || x < -300 || x > W + 300 || y < -300 || y > H + 300) break;
+  }
+  fieldLines.push({ pts, len, L: len[len.length - 1] });
+}
+function alongLine(f, d) { let i = Math.min(f.pts.length - 1, Math.floor(d / 4)); return f.pts[i]; }
+function sceneC(t, A) {
+  if (A <= 0) return;
+  ctx.globalCompositeOperation = 'lighter';
+  const rp = easeInOut(prog(t, 12.6, 14.4));
+  ctx.lineWidth = 1.3; ctx.strokeStyle = 'rgba(160,190,255,1)';
+  for (const f of fieldLines) {
+    ctx.globalAlpha = A * 0.28; ctx.beginPath();
+    const n = Math.floor(f.pts.length * rp);
+    for (let k = 0; k < n; k++) k === 0 ? ctx.moveTo(...f.pts[k]) : ctx.lineTo(...f.pts[k]);
+    ctx.stroke();
+    if (rp > 0.6) for (let j = 0; j < 6; j++) {
+      const d = ((t - 12.6) * 260 + j * f.L / 6) % f.L, [x, y] = alongLine(f, d);
+      const edge = Math.min(1, d / 60, (f.L - d) / 60);
+      glow(x, y, 12, d / f.L < 0.5 ? 'amber' : 'cyan', A * prog(rp, 0.6, 1) * edge * 0.9);
+    }
+  }
+  const pulse = 1 + 0.08 * Math.sin(t * 5);
+  glow(...QP, 150 * pulse, 'amber', A * 0.9); glow(...QP, 36, 'white', A);
+  glow(...QN, 150 * pulse, 'cyan', A * 0.9); glow(...QN, 36, 'white', A);
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = A; ctx.fillStyle = '#04050A';
+  ctx.font = "500 48px Inter"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('+', QP[0], QP[1] + 2); ctx.fillText('−', QN[0], QN[1] + 2);
+}
+
+// ---------- D · two-source interference ----------
+const S1 = [440, 250], S2 = [640, 250], KW = 2 * Math.PI / 70, OMEGA = 7;
+function sceneD(t, A) {
+  if (A <= 0) return;
+  ctx.globalCompositeOperation = 'lighter';
+  const u = t - 18.8, front = u * 520;
+  for (let y = 180; y < 1250; y += 22) for (let x = 20; x < W; x += 22) {
+    const r1 = Math.hypot(x - S1[0], y - S1[1]), r2 = Math.hypot(x - S2[0], y - S2[1]);
+    const m1 = clamp((front - r1) / 80), m2 = clamp((front - r2) / 80); if (m1 + m2 <= 0) continue;
+    const v = (m1 * Math.sin(KW * r1 - OMEGA * u) + m2 * Math.sin(KW * r2 - OMEGA * u)) / 2;
+    const a = Math.abs(v), fall = clamp(1 - (y - 180) / 1300) * 0.7 + 0.3;
+    ctx.globalAlpha = A * (0.1 + 0.9 * a) * fall;
+    ctx.fillStyle = v > 0 ? rgba('cyan', 1) : rgba('violet', 1);
+    const s = 1.5 + 3.5 * a; ctx.beginPath(); ctx.arc(x, y + v * 6, s, 0, Math.PI * 2); ctx.fill();
+  }
+  glow(...S1, 50, 'white', A); glow(...S2, 50, 'white', A);
+}
+
+// ---------- E · particles form the title ----------
+let titlePts = [];
+function buildTitle() {
+  const o = document.createElement('canvas'); o.width = W; o.height = 360; const x = o.getContext('2d');
+  x.fillStyle = '#fff'; x.font = "500 250px Corm"; x.textAlign = 'center'; x.textBaseline = 'middle';
+  if ('letterSpacing' in x) x.letterSpacing = '18px';
+  x.fillText('PHYSICS', W / 2, 180);
+  const d = x.getImageData(0, 0, W, 360).data, R = rng(21);
+  for (let yy = 0; yy < 360; yy += 5) for (let xx = 0; xx < W; xx += 5) if (d[(yy * W + xx) * 4 + 3] > 128) {
+    const th = R() * Math.PI * 2, rr = 500 + R() * 900;
+    titlePts.push({ tx: xx, ty: yy + 560, sx: CX + Math.cos(th) * rr, sy: CY + Math.sin(th) * rr, dl: R() * 0.9, ph: R() * 6.28, c: R() < 0.2 ? 'amber' : (R() < 0.5 ? 'cyan' : 'white') });
+  }
+}
+function sceneE(t, A) {
+  if (A <= 0) return;
+  ctx.globalCompositeOperation = 'lighter';
+  for (const p of titlePts) {
+    const q = expo(prog(t, 25.0 + p.dl, 26.8 + p.dl));
+    // swirl in along a curved path
+    const sw = (1 - q) * 1.4, dx = p.sx - p.tx, dy = p.sy - p.ty;
+    const x = p.tx + (dx * Math.cos(sw) - dy * Math.sin(sw)) * (1 - q), y = p.ty + (dx * Math.sin(sw) + dy * Math.cos(sw)) * (1 - q);
+    const sh = 0.75 + 0.25 * Math.sin(t * 4 + p.ph);
+    glow(x, y, 7 + (1 - q) * 6, p.c, A * (0.25 + 0.6 * q) * sh);
+  }
+  const f = prog(t, 27.0, 27.8) * (1 - prog(t, 27.8, 29.5));
+  glow(CX, 740, 700, 'cyan', A * f * 0.25);
+}
+
+// ---------- F/G · spiral galaxy, collapse, final burst ----------
+const RG = rng(31);
+const galaxy = Array.from({ length: 1400 }, () => {
+  const arm = RG() * 2 | 0, r = 30 + Math.pow(RG(), 0.7) * 520;
+  return { r, th: arm * Math.PI + Math.log(r / 30) * 1.6 + (RG() - 0.5) * 0.6, c: r < 120 ? 'amber' : (RG() < 0.6 ? 'cyan' : 'violet'), s: 2 + RG() * 5, ph: RG() * 6.28 };
+});
+const GC = [CX, 960];
+function sceneF(t, A) {
+  if (A <= 0) return;
+  ctx.globalCompositeOperation = 'lighter';
+  const col = easeInOut(prog(t, 36.4, 37.8));          // collapse to the core
+  for (const g of galaxy) {
+    const w = 0.9 / Math.sqrt(g.r / 60);                  // differential rotation
+    const th = g.th + (t - 31) * w + col * 3, r = g.r * (1 - col);
+    const x = GC[0] + Math.cos(th) * r, y = GC[1] + Math.sin(th) * r * 0.42;
+    glow(x, y, g.s * (1 + col), g.c, A * (0.3 + 0.2 * Math.sin(t * 3 + g.ph)) * (0.4 + 0.6 * col));
+  }
+  glow(...GC, 200 + 300 * col, 'amber', A * (0.2 + 0.8 * col));
+}
+const RB = rng(41);
+const finale = Array.from({ length: 500 }, () => { const th = RB() * 6.283, v = 200 + 1200 * Math.pow(RB(), 2); return { cx: Math.cos(th), cy: Math.sin(th), v, k: 1.4 + RB(), c: ['cyan', 'amber', 'white', 'violet'][RB() * 4 | 0], s: 3 + RB() * 5 }; });
+function sceneG(t) {
+  const u = t - 37.8; if (u < 0) return;
+  ctx.globalCompositeOperation = 'lighter';
+  glow(...GC, 100 + 1400 * Math.sqrt(prog(u, 0, 1)), 'white', 1.2 * (1 - prog(u, 0, 1)));
+  for (const p of finale) {
+    const d = p.v * (1 - Math.exp(-p.k * u)) / p.k, x = GC[0] + p.cx * d, y = GC[1] + p.cy * d;
+    glow(x, y, p.s, p.c, 0.25 + 0.75 * (1 - prog(u, 0, 3)));   // settles into a quiet starfield
+  }
+}
+
+// ---------- compose ----------
+const txs = [...document.querySelectorAll('.tx')];
+function render(t) {
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  const bg = ctx.createRadialGradient(CX, CY, 0, CX, CY, 1300);
+  bg.addColorStop(0, '#0D1226'); bg.addColorStop(1, '#03040A'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#fff';
+  for (const s of stars) { ctx.globalAlpha = 0.18 + 0.2 * Math.sin(t * 1.3 + s.ph); ctx.beginPath(); ctx.arc(s.x, (s.y - t * 6 * s.d + H) % H, s.r, 0, 6.283); ctx.fill(); }
+
+  sceneA(t, win(t, 0, 6.6, 0.01, 0.8));
+  sceneB(t, win(t, 6.0, 12.6, 0.6, 0.6));
+  sceneC(t, win(t, 12.3, 18.8, 0.5, 0.6));
+  sceneD(t, win(t, 18.6, 25.0, 0.4, 0.8));
+  sceneE(t, win(t, 24.6, 31.2, 0.3, 0.8));
+  sceneF(t, win(t, 30.8, 38.0, 1.0, 0.25));
+  sceneG(t);
+
+  // vignette + grain
+  ctx.globalCompositeOperation = 'source-over';
+  const vg = ctx.createRadialGradient(CX, H / 2, 500, CX, H / 2, 1250);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.7)'); ctx.globalAlpha = 1; ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  ctx.globalAlpha = 0.045; ctx.globalCompositeOperation = 'overlay';
+  const ox = (t * 977) % 256 | 0, oy = (t * 613) % 256 | 0;
+  for (let y = -oy; y < H; y += 256) for (let x = -ox; x < W; x += 256) ctx.drawImage(grain, x, y);
+  ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+
+  for (const el of txs) {
+    const a = +el.dataset.a, b = +el.dataset.b, p = win(t, a, b, 0.9, 0.5), e = easeOut(prog(t, a, a + 0.9));
+    el.style.opacity = p;
+    el.style.transform = `translateY(${(1 - e) * 24}px)`;
+    el.style.filter = `blur(${(1 - e) * 10}px)`;
+  }
+  document.getElementById('tc').textContent = `00:${String(Math.floor(t)).padStart(2, '0')}`;
+}
+
+window.DURATION = DURATION;
+window.render = render;
+window.ready = Promise.all(["300 40px Corm", "500 40px Corm", "italic 400 40px Corm", "300 40px Inter", "500 40px Inter", "300 40px NotoSerifSC", "600 40px NotoSerifSC", "40px STIX", "italic 40px STIX"]
+  .map(f => document.fonts.load(f, 'Aa物理ħψ∇'))).then(() => { buildTitle(); render(0); });
+if (!new URLSearchParams(location.search).has('capture')) window.ready.then(() => {
+  const t0 = performance.now(); const loop = () => { render(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop); }; loop();
+});
+</script>
+</body>
+</html>
