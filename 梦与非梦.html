@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>梦与非梦 · 安亭</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column like a stack of carbon-copied forms; choices are tear-off slips; archive and sources fold out below. */
+:root{
+  --paper:#e8ecea; --slip:#f6f8f6; --ink:#1c2321; --muted:#5a6661;
+  --carbon:#2b3d8c; --stamp:#9e2f28; --rule:#c3cbc7; --fict:#7a5a12;
+  --serif:"Noto Serif SC","Songti SC","SimSun",serif;
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#121615; --slip:#1a201e; --ink:#dde3e0; --muted:#8e9a95;
+  --carbon:#93a6f2; --stamp:#e27a70; --rule:#2c3432; --fict:#d8b25e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#121615; --slip:#1a201e; --ink:#dde3e0; --muted:#8e9a95;
+  --carbon:#93a6f2; --stamp:#e27a70; --rule:#2c3432; --fict:#d8b25e; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.85}
+.wrap{max-width:42rem;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+header.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--rule);padding-bottom:10px}
+header.top b{color:var(--ink);font-weight:500}
+.stamp{font-family:var(--mono);font-size:13px;letter-spacing:.05em;color:var(--carbon);margin-top:28px}
+.place{font-family:var(--sans);font-size:13px;color:var(--muted);margin-top:2px}
+h1{font-weight:900;font-size:clamp(2.4rem,9vw,3.6rem);line-height:1.1;letter-spacing:.04em;margin:40px 0 8px;text-wrap:balance}
+h1 small{display:block;font-family:var(--sans);font-weight:400;font-size:1rem;letter-spacing:.2em;color:var(--muted);margin-top:14px}
+h2{font-weight:700;font-size:1.35rem;margin:6px 0 0;text-wrap:balance}
+.story p{margin:1em 0}
+.story .aside{font-family:var(--sans);font-size:14px;color:var(--muted)}
+.tag{display:inline-block;font-family:var(--sans);font-size:11px;letter-spacing:.08em;padding:1px 7px;border:1px solid currentColor;border-radius:2px;margin-left:8px;vertical-align:2px}
+.tag.fict{color:var(--fict)} .tag.hist{color:var(--carbon)} .tag.disp{color:var(--stamp)}
+.choices{display:grid;gap:12px;margin-top:28px}
+.choice{all:unset;box-sizing:border-box;display:block;cursor:pointer;background:var(--slip);color:var(--ink);
+  padding:14px 18px;border-top:2px dashed var(--rule);font-family:var(--serif);font-size:16px;line-height:1.7;transition:transform .15s,border-color .15s}
+.choice:hover{border-top-color:var(--carbon);transform:translateX(3px)}
+.choice:focus-visible{outline:2px solid var(--carbon);outline-offset:3px}
+.choice .who{display:block;font-family:var(--sans);font-size:12px;color:var(--muted);margin-bottom:2px}
+.choice.locked{cursor:default;opacity:.62}
+.choice.locked:hover{transform:none;border-top-color:var(--rule)}
+.choice.locked .why{display:block;font-family:var(--sans);font-size:13px;color:var(--stamp);margin-top:4px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:40px;border-top:1px solid var(--rule);padding-top:14px}
+.tbtn{all:unset;cursor:pointer;font-family:var(--sans);font-size:13px;padding:5px 12px;border:1px solid var(--rule);border-radius:3px;color:var(--muted)}
+.tbtn[aria-pressed="true"]{color:var(--carbon);border-color:var(--carbon)}
+.tbtn:focus-visible{outline:2px solid var(--carbon);outline-offset:2px}
+.panel{margin-top:16px;background:var(--slip);padding:16px 18px;font-size:15px}
+.panel h3{font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:.12em;color:var(--muted);margin:0 0 10px}
+.arch{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.arch li{font-family:var(--mono);font-size:13.5px;line-height:1.7;border-left:2px solid var(--rule);padding-left:12px}
+.arch li.y77{border-left-color:var(--stamp)}
+.arch .empty{color:var(--muted)}
+.src p{margin:.4em 0;font-family:var(--sans);font-size:14px;line-height:1.7}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:28px 0 0}
+.lens{margin-top:14px}
+.lens p{margin:.8em 0}
+.lens .disclaim{font-family:var(--sans);font-size:13px;color:var(--fict)}
+.rel{display:grid;gap:12px;margin-top:14px}
+.rel div{display:grid;grid-template-columns:5.5em 1fr;gap:10px}
+.rel b{font-family:var(--sans);font-weight:500;font-size:14px;color:var(--muted)}
+.rel span{min-width:0}
+.restart{all:unset;cursor:pointer;display:inline-block;margin-top:36px;font-family:var(--sans);font-size:15px;color:var(--paper);background:var(--ink);padding:10px 22px;border-radius:3px}
+.restart:focus-visible{outline:2px solid var(--carbon);outline-offset:3px}
+.note-start{font-family:var(--sans);font-size:14px;color:var(--muted);line-height:1.8}
+@media (prefers-reduced-motion:reduce){.choice{transition:none}}
+.g{all:unset;cursor:pointer;color:inherit;border-bottom:1px dotted var(--carbon);text-decoration:none}
+.g:hover{color:var(--carbon);border-bottom-style:solid}
+.g:focus-visible{outline:2px solid var(--carbon);outline-offset:2px}
+#sheet{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:0 12px calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none}
+.sheet-in{pointer-events:auto;max-width:40rem;margin:0 auto;background:var(--slip);border-top:3px solid var(--carbon);box-shadow:0 -6px 24px rgba(0,0,0,.18);padding:16px 18px 18px}
+.sheet-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.sheet-in h4{margin:0;font-size:1.05rem;font-weight:700}
+.sheet-in p{margin:.6em 0 0;font-family:var(--sans);font-size:14.5px;line-height:1.8}
+.x{all:unset;cursor:pointer;font-family:var(--sans);font-size:13px;color:var(--muted);padding:2px 6px}
+.x:focus-visible{outline:2px solid var(--carbon)}
+.glist{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:15px}
+.fade{animation:fin .35s ease-out}
+@keyframes fin{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.fade{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><span>梦与非梦 · 第一幕 · 安亭（试玩）</span><span id="dreams"></span></header>
+  <main id="app" aria-live="polite"></main>
+  <div id="sheet" role="dialog" aria-modal="false" aria-label="词条" hidden>
+    <div class="sheet-in"><div class="sheet-head"><h4></h4><button type="button" class="x" aria-label="关闭">关闭</button></div><p></p></div>
+  </div>
+</div>
+
+<script>
+(function(){
+const S0 = {scene:"title", facts:[], archive:[], lens:"huang", tab:null, y77:false, talked:false, seen:[]};
+let st = Object.assign({}, S0, (window.claude && window.claude.hot && window.claude.hot.data && window.claude.hot.data.st) || {});
+let dreamCount = 1;
+try{ dreamCount = parseInt(localStorage.getItem("mfm-dreams")||"1",10)||1 }catch(e){}
+
+const has = f => st.facts.includes(f);
+
+/* ---------- glossary ---------- */
+const GLOSS = {
+  yufeng:{m:["裕丰纱厂"],t:"裕丰纱厂",b:"日本商人在上海杨树浦开办的纱厂。1945年抗战胜利后收归国有，改为中国纺织建设公司第十七棉纺织厂，也就是后来的国棉十七厂，上海最大的三家纺织厂之一。"},
+  cui:{m:["崔根娣"],t:"崔根娣",b:"王洪文的妻子，国棉十七厂工人。文革后她评价王洪文“爱管闲事”。1976年10月，王洪文曾托秘书向她提出离婚以免牵连家人，她表示只要孩子给她就答应，但手续未办完王洪文就被捕了。"},
+  nie:{m:["聂元梓"],t:"聂元梓（1921—2019）",b:"北京大学哲学系党总支书记。1966年5月25日与另外六人在北大贴出大字报，点名批判北大党委书记陆平等人。毛泽东下令向全国广播，此举点燃了全国范围的造反。聂后来成为北京红卫兵“五大领袖”之一，1983年被判处有期徒刑十七年。"},
+  first:{m:["全国第一张马列主义大字报"],t:"“全国第一张马列主义的大字报”",b:"毛泽东对聂元梓大字报的评语。1966年6月1日晚中央人民广播电台播出这张大字报，次日《人民日报》全文刊登，并配发评论员文章《欢呼北大的一张大字报》。它向全国传递了一个信号：群众可以公开批判本单位的党组织。"},
+  dzb:{m:["大字报"],t:"大字报",b:"用毛笔写在大张纸上、贴在公共场所的文字，是文革中最主要的群众表达方式。写谁、签不签名、贴在哪里，都可能决定一个人此后的命运。"},
+  sanjia:{m:["三家村"],t:"三家村",b:"邓拓、吴晗、廖沫沙三人1961年起在北京市委刊物《前线》上合写杂文专栏“三家村札记”。1966年5月被定为“反党反社会主义”的黑店，遭全国批判。文革初期很多单位的大字报先批这类远处的目标，本单位的领导则不敢碰。"},
+  gzd:{m:["工作队"],t:"工作队",b:"1966年6月，在毛泽东离京期间主持中央一线工作的刘少奇、邓小平决定向学校和工厂派驻工作队，领导运动。工作队普遍把矛头引向“牛鬼蛇神”和给党委提意见的群众。7月底毛泽东回京后批评工作队“压制群众”，下令撤出学校，此后“反工作队”成为造反派的正当性来源。"},
+  nggs:{m:["牛鬼蛇神"],t:"牛鬼蛇神",b:"文革中对各种“阶级敌人”的泛称，范围可以无限扩大：地主、富农、反革命、坏分子、右派，以及有“历史问题”的人。把运动的重点放在“横扫牛鬼蛇神”，往往意味着整的是普通群众，而不是当权者。"},
+  dangan:{m:["档案袋"],t:"档案与黑材料",b:"中国城市单位中每人都有一份人事档案，由组织保管，本人不能查看，随人调动，决定入党、提干、分房等一切事务。文革初期工作队和党委收集群众的言行整理成材料装进档案，后来被称作“黑材料”。要求销毁黑材料，是1966年秋冬造反派最迫切的诉求之一。"},
+  shiliu:{m:["《十六条》"],t:"《十六条》",b:"1966年8月8日八届十一中全会通过的《中共中央关于无产阶级文化大革命的决定》，共十六条。它规定运动的重点是“整党内那些走资本主义道路的当权派”，并警告不准把群众打成反革命。造反派普遍把它当作护身符。"},
+  liao:{m:["廖祖康"],t:"廖祖康",b:"1948年生，国棉十七厂职业学校学生。文革初期带红卫兵为王洪文解围，此后一直追随他，后来成为王洪文在北京的生活秘书。他的回忆是关于王洪文私生活的重要来源，但网上流传的版本大多经过改写。"},
+  hongqi:{m:["《红旗》杂志"],t:"《红旗》杂志",b:"中共中央理论刊物，文革中由陈伯达等人主持，与《人民日报》《解放军报》合称“两报一刊”，其社论往往代表最高层的最新意图。"},
+  fdlx:{m:["资产阶级反动路线"],t:"资产阶级反动路线",b:"1966年10月《红旗》社论和中央工作会议正式提出的说法，指文革初期派工作队、打击群众的做法。一旦被定为“反动路线”，此前被整的群众就可以要求平反，此前整人的干部则要检讨。这个转向让大批基层造反派从“被整的人”变成了“正确的人”。"},
+  hwb:{m:["红卫兵"],t:"红卫兵",b:"1966年起以大中学生为主的群众组织。8月起毛泽东在天安门多次接见红卫兵，全国“大串联”开始，学生免费乘车四处串联。北京学生到上海串联，是上海工人造反派早期的重要推动力。"},
+  wxz:{m:["王秀珍"],t:"王秀珍",b:"国棉三十厂工人，劳动模范，工总司早期骨干，后任上海市委书记，是文革中职位最高的上海女工之一。1976年后被清查判刑。"},
+  hjh:{m:["黄金海"],t:"黄金海（1935—2015）",b:"国棉三十一厂工人，1965年被评为上海市五好工人。文革初期因大字报被打成反党分子，愤而造反，是工总司的筹建者之一，后任上海市革委会常委。1976年后以“反革命罪”被判刑十五年，1991年出狱，晚年写成回忆录《十年非梦》。"},
+  wuhao:{m:["五好工人"],t:"五好工人",b:"六十年代工厂里评比的荣誉称号，要求政治思想、完成任务、遵守纪律、团结互助、学习好。能当选的通常是车间里公认的积极分子。"},
+  fandang:{m:["反党反社会主义分子"],t:"反党反社会主义分子",b:"一种政治定性。一旦被扣上，不仅本人在单位里抬不起头，档案里也会留下记录，家属同样受到影响。文革初期很多只是给基层党组织提意见的人都被这样定性。"},
+  maoxuan:{m:["学毛选"],t:"学毛选",b:"学习《毛泽东选集》。六十年代全国推广“学毛著”运动，工厂车间普遍组织学习小组。批评党组织学毛选不认真，本来是站在最正确的立场上提意见，却照样可以被打成反党。"},
+  pan:{m:["潘国平"],t:"潘国平",b:"上海玻璃机械厂青年工人，工总司早期最活跃的领导人之一，人称“潘司令”，一度名气在王洪文之上。安亭事件后带人去苏州。此后逐渐被边缘化，多次受到审查。"},
+  gzs:{m:["上海工人革命造反总司令部","工总司"],t:"工总司",b:"上海工人革命造反总司令部，1966年11月成立，王洪文为主要负责人。它是全国第一个被中央文革小组明确支持的跨行业、全市性工人造反组织。1967年后逐步体制化，骨干进入各级革委会，在上海政坛活跃了整整十年。"},
+  cao:{m:["曹荻秋"],t:"曹荻秋（1909—1976）",b:"时任上海市长、市委书记处书记，市委第一书记陈丕显病休期间主持日常工作。对工总司采取“不参加、不承认、不支持”的方针。1967年一月风暴后被打倒，1976年去世。"},
+  sanbu:{m:["不参加，不承认，不支持"],t:"“三不”方针",b:"上海市委对工总司的态度。当时中央的规定是工人不得跨厂串联、不得成立跨行业组织，市委以此为依据。在造反派看来，这等于宣布他们非法。"},
+  nzzz:{m:["北站"],t:"上海北站",b:"当时上海的铁路总站，沪宁线的起点。11月9日深夜，工总司的工人从这里挤上北去的列车。"},
+  anting:{m:["安亭"],t:"安亭",b:"上海嘉定县的一个小镇，沪宁铁路上的一个小站。1966年11月10日，北上工人的列车在这里被停下，工人卧轨拦车，史称“安亭事件”。"},
+  hn:{m:["沪宁线"],t:"沪宁铁路",b:"上海到南京的铁路，当时是全国最繁忙的干线之一，连接京沪线。它中断三十多个小时，近百趟列车受阻，是震动中央的大事。"},
+  cwd:{m:["赤卫队"],t:"赤卫队",b:"上海工人赤卫队，保守派工人组织，成员多是党团员、劳模和积极分子，主张保卫市委、坚持生产。安亭事件后迅速发展到数十万人。12月30日在康平路市委驻地与工总司发生大规模冲突，被击溃，此后瓦解。"},
+  cbd:{m:["陈伯达"],t:"陈伯达（1904—1989）",b:"毛泽东的长期秘书，中央文革小组组长，《红旗》杂志总编辑。安亭事件时曾发电报劝工人回上海“抓革命促生产”。1970年庐山会议后倒台。"},
+  zcq:{m:["张春桥"],t:"张春桥（1917—2005）",b:"上海市委书记处书记、中央文革小组副组长。安亭事件中他未经华东局和上海市委同意，签字承认工总司合法，由此在上海建立起自己的群众基础，王洪文也由此进入他的视野。后为“四人帮”成员，1981年被判处死刑缓期执行。"},
+  zyw:{m:["中央文革小组"],t:"中央文革小组",b:"1966年5月成立，名义上隶属政治局常委会，实际上成为文革的指挥中枢。组长陈伯达，顾问康生，第一副组长江青，副组长张春桥等。它对哪个群众组织表态支持，几乎决定该组织的命运。"},
+  hdj:{m:["华东局"],t:"华东局",b:"中共中央华东局，中央派驻华东地区的领导机构，地位在上海市委之上。安亭事件中它与上海市委都主张不承认工总司。"},
+  wuxiang:{m:["五项要求"],t:"五项要求",b:"11月13日张春桥签字同意的工总司要求，大致包括：承认工总司是合法的革命组织，承认安亭事件是革命行动，后果由华东局和上海市委负责，曹荻秋公开检讨，为工总司工作提供方便。它推翻了市委此前的全部立场。"},
+  qincheng:{m:["秦城"],t:"秦城监狱",b:"位于北京昌平，关押高级别政治犯的监狱。王洪文1976年被捕后在此关押，1981年被判处无期徒刑，1986年后因病转院治疗，1992年8月3日病逝。"},
+};
+const GLIST = Object.entries(GLOSS).flatMap(([k,v])=>v.m.map(x=>[x,k])).sort((a,b)=>b[0].length-a[0].length);
+function gloss(html){
+  const slots=[]; const used=new Set();
+  for(const [term,key] of GLIST){
+    if(used.has(key)) continue;
+    const idx = html.indexOf(term);
+    if(idx<0) continue;
+    const before = html.slice(0,idx);
+    if(before.lastIndexOf("<")>before.lastIndexOf(">")) continue;
+    used.add(key);
+    slots.push(`<button type="button" class="g" data-g="${key}">${term}</button>`);
+    html = before + "\u0000"+(slots.length-1)+"\u0000" + html.slice(idx+term.length);
+  }
+  used.forEach(k=>{ if(!st.seen.includes(k)) st.seen.push(k) });
+  return html.replace(/\u0000(\d+)\u0000/g,(_,i)=>slots[+i]);
+}
+const sheet = document.getElementById("sheet");
+function openGloss(key){
+  const g = GLOSS[key]; if(!g) return;
+  sheet.querySelector("h4").textContent = g.t;
+  sheet.querySelector("p").textContent = g.b;
+  sheet.hidden = false;
+  sheet.querySelector(".x").focus();
+}
+document.addEventListener("click",e=>{
+  const b = e.target.closest(".g"); if(b){ openGloss(b.dataset.g); return }
+  if(e.target.closest("#sheet .x")) sheet.hidden = true;
+});
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") sheet.hidden=true });
+const any = (...fs) => fs.some(has);
+
+/* ---------- scenes ---------- */
+const SC = {};
+
+SC.p1 = {
+  stamp:"1966年6月 · 初夏", place:"杨树浦 · 国棉十七厂",
+  title:"广播",
+  text:()=>`
+<p>国棉十七厂的前身是日本人的裕丰纱厂。八千多人，三班倒，机器二十四小时不停。你在保卫科上班，管民兵，管门卫，管厂里丢了东西以后的调查。你一个月拿六十四元，家里有老婆崔根娣和孩子。</p>
+<p>六月初的一天，中午，厂里的大喇叭突然念起一张大字报。北京大学的聂元梓，写大字报点名批评北大党委。念完以后，喇叭里接着念《人民日报》的评论员文章。第二天厂里就传开了，说毛主席亲自批示，称它是全国第一张马列主义大字报。</p>
+<p>食堂里一下子安静了。有人筷子停在半空。</p>
+<p>你听得很仔细。你想的是：原来党委也是可以批评的。原来报纸上说的，是这个意思。</p>
+<p>厂里平时有些事，大家心里都有数，只是没人敢说。谁家亲戚进了厂，谁评先进是走了关系，谁在车间里对女工动手动脚没人管。你是保卫科的人，这些事你知道得比别人多。</p>
+<p>那几天，厂里开始有人贴大字报了。贴的都是些不痛不痒的，批批“三家村”，批批历史上的人物。没有人碰厂党委。</p>`,
+  choices:[
+    {t:"那天晚上，你在宿舍里找出一沓白纸，开始写。", set:null, a66:null, a77:null, next:"p2"}
+  ],
+  src:`<p><span class="tag hist">史实</span> 国棉十七厂前身是日商裕丰纱厂，文革时有八千多名职工；王洪文时为保卫科干事，月工资64元。见李逊〈工厂基层干部王洪文〉（《革命造反年代》第六章）。</p>
+<p><span class="tag hist">史实</span> 1966年6月1日，中央人民广播电台播出聂元梓等人的大字报，次日《人民日报》全文刊登并配发评论员文章。这一事件在全国工厂学校引发了第一波贴大字报的浪潮。</p>
+<p><span class="tag fict">虚构</span> 食堂场景、王洪文当时的心理活动为游戏演绎。</p>`
+};
+
+SC.p2 = {
+  stamp:"1966年6月12日", place:"国棉十七厂 · 医务室旁的大字报栏",
+  title:"剥开画皮看真相",
+  text:()=>`
+<p>大字报的标题是你定的：《剥开画皮看真相》。矛头对着厂党委。</p>
+<p>签名的一共七个人，你是第一个。其他六个人签字的时候，手都有点抖。有一个人签了又划掉，想了一会儿，又重新签上。</p>
+<p>大字报一贴出来，全厂轰动。下了班的人不走，挤在大字报栏前面一个字一个字地看。有人小声念出来，旁边的人就点头。也有人看完了，一句话不说，转身就走。</p>
+<p>第二天，厂党委的人来找你们谈话。态度很客气，说欢迎群众提意见，但是要注意方式方法，不要被坏人利用。</p>
+<p>又过了几天，市里派来了工作队。</p>`,
+  choices:[
+    {t:"你以为工作队是来支持你们的。", set:null,
+     a66:"6月12日　带头贴出大字报，揭发厂党委问题。",
+     a77:"6月12日　带头炮打厂党委，揭开在国棉十七厂篡权的序幕。", next:"p3"}
+  ],
+  src:`<p><span class="tag hist">史实</span> 6月12日，王洪文起草并领头签名的大字报《剥开画皮看真相》贴出，后面有六人签名，在全厂引起轰动。见激流网转载的李逊书章节〈王洪文最初的造反〉。</p>
+<p><span class="tag hist">史实</span> 文革初期，各地党委普遍向工厂学校派驻工作队领导运动。</p>
+<p><span class="tag fict">虚构</span> 签名时的细节为游戏演绎。</p>`
+};
+
+SC.p3 = {
+  stamp:"1966年7月至10月", place:"国棉十七厂",
+  title:"工作队",
+  text:()=>`
+<p>工作队的报告你听了三遍，越听越不对劲。报告里说，运动的重点是“搜索一切牛鬼蛇神”，要全厂职工“到深山密林中寻老虎”。你们揭发的那些事，报告里一个字都没提。</p>
+<p>老虎是谁？车间里开始传，说贴大字报的那几个人，历史上都有问题。</p>
+<p>保卫科的同事告诉你一件事，他是压低了声音说的：工作队在整材料。谁贴了什么大字报，谁在会上说了什么话，谁跟谁走得近，一条一条都记下来，装进档案袋。</p>
+<p>你在保卫科干了六年，你比谁都清楚档案袋意味着什么。那几页纸会跟着一个人走一辈子，调动、入党、提干、分房子，每一次都要被翻出来看。而本人永远看不到上面写了什么。</p>
+<p>八月，报上登出了《十六条》。你在食堂里读完，拍着桌子说：“好像中央在直接指我们厂的形势。”《十六条》里写着，运动的重点是整党内走资本主义道路的当权派，要警惕有人把群众打成反革命。</p>
+<p>可是在厂里，什么都没变。工作队组织了四次全厂大辩论，辩论的中心就是你们。十月十日那一次，你被一群人围在中间，推推搡搡，有人往你脸上吐唾沫。</p>
+<p>后来是厂里职业学校的一群学生冲进来，把你拉了出去。带头的那个孩子才十八岁，叫廖祖康。</p>`,
+  choices:[
+    {t:"那天晚上你没睡着。你决定去北京。", set:null, a66:null, a77:null, next:"p4"}
+  ],
+  src:`<p><span class="tag hist">史实</span> 工作队报告强调“搜索一切牛鬼蛇神”“到深山密林中寻老虎”，对王洪文等人的揭发只字不提；工作队组织了四次全厂大辩论，10月10日王洪文被围，职校学生廖祖康带红卫兵解围。王洪文读《十六条》后说“好像中央在直接指我们厂的形势”。均见李逊书第六章。</p>
+<p><span class="tag hist">史实</span> 工作队整理“黑材料”是文革初期的普遍现象，后来在批判“资产阶级反动路线”时成为造反派最主要的诉求之一。</p>
+<p><span class="tag fict">虚构</span> 吐唾沫等细节、保卫科同事的告密为游戏演绎。</p>`
+};
+
+SC.p4 = {
+  stamp:"1966年10月下旬", place:"北京 · 回上海的列车上",
+  title:"北京",
+  text:()=>`
+<p>去北京的车票钱是几个人凑的。那时候工人离开生产岗位，是要被扣工资、记处分的。很少有人敢这么干。</p>
+<p>北京和上海完全是两个世界。满大街都是红卫兵，大字报贴满了每一面墙。你听说中央刚刚开过会，《红旗》杂志发了社论，批判“资产阶级反动路线”。那些派工作队整群众的做法，现在有了一个名字，叫反动路线。被整的人可以要求平反，黑材料要当众销毁。</p>
+<p>你在接待站排了两天队，把国棉十七厂的情况写成材料交了上去。没有人给你回信。但是你觉得，风向变了。</p>
+<p>回上海的车上，你一直在想：北京的学生已经起来了，上海的工人呢？</p>
+<p>回到厂里第三天，国棉三十厂的王秀珍托人来请你，要你去给她们厂的人讲讲北京的情况。她是劳动模范，也是被厂党委打压的。第五天，国棉三十一厂的黄金海亲自跑到你们厂来找你。</p>
+<p>黄金海是五好工人。六月里他贴了一张大字报，批评党总支学毛选态度不端正，就这么一句话，被打成了反党反社会主义分子。他老婆在家天天掉眼泪，食堂里原来跟他一桌吃饭的人，现在端着饭盒躲开他。他去市委告过状，石沉大海。</p>
+<p>他跟你讲这些的时候，声音很平，一直在抽烟。讲完了，他问你：“北京那边，到底怎么说？”</p>
+<p>你发现，像你们这样的人，每个厂里都有。</p>`,
+  choices:[
+    {t:"十一月初，有人通知你：几个厂的人要在愚园路碰个头。", set:null, a66:null, a77:null, next:"yuyuan"}
+  ],
+  src:`<p><span class="tag hist">史实</span> 王洪文十月赴京告状，车票钱是大家凑的；当时很少有工人敢离开生产岗位。回沪后王秀珍、黄金海先后请他介绍北京形势。见李逊书第六章。</p>
+<p><span class="tag hist">史实</span> 黄金海是1965年上海市五好工人，六月贴大字报批评党总支学毛选态度不端正，被打成反党反社会主义分子，妻子在家掉泪，同事躲避，向市委告状无果。见黄金海《十年非梦》及维基百科“黄金海”条目。</p>
+<p><span class="tag hist">史实</span> 1966年10月中央工作会议前后，《红旗》社论提出批判“资产阶级反动路线”，要求为被打成“反革命”的群众平反、销毁黑材料。</p>`
+};
+
+SC.yuyuan = {
+  stamp:"1966年11月6日 · 夜", place:"愚园路311号",
+  title:"谁来当头",
+  text:()=>`
+<p>说是碰个头，来了十几个人，来自十几家厂，彼此大多只见过一两面。屋里烟很呛，窗户开着也散不出去。</p>
+<p>一开始是轮流讲自己厂里的事。上海铁路局装卸机械厂来的人讲，他们厂里的造反派被保守派私设公堂，关起来打。讲到一半讲不下去了，旁边的人替他接着讲。另一个人讲，他们厂党委说，谁再贴大字报，年底就不给评级。还有一个临时工讲，他是临时工，本来就没有档案袋，厂里说开除就开除。</p>
+<p>讲着讲着，屋里的气氛就变了。每个人单独在自己厂里，都是被整的那一个。坐在一起，才发现是一群人。</p>
+<p>有人说：一个厂一个厂地斗，斗不过的。党委上面有局，局上面有市委。我们要成立一个全市的组织，跨厂，跨行业。</p>
+<p>有人说：中央没说工人可以跨厂串联。市委肯定不认。</p>
+<p>玻璃机械厂的小青工潘国平站起来，他二十出头，是整晚嗓门最大的一个：“北京的学生能成立司令部，工人为什么不能？”</p>
+<p>名字就这样定了，叫上海工人革命造反总司令部。剩下的问题是谁来当头。</p>
+<p>黄金海坐在窗边，没说话。有人看向你。你是国棉十七厂保卫科的干事，党员，当过兵，今年三十一岁。你在厂里贴的那张大字报，你去北京的事，在座的都听说过。</p>`,
+  choices:[
+    {t:"“我提议，每个人摆一摆自己的条件，谁条件好谁来当。”", set:"lead_self",
+     a66:"11月6日　愚园路筹备会，经与会同志推举，任工总司筹备组负责人。",
+     a77:"11月6日　于愚园路311号以摆资历手段排挤他人，攫取工总司头目职位。", next:"rally"},
+    {t:"“小潘冲在最前面，我看让他来。”", set:"lead_pan",
+     a66:"11月6日　愚园路筹备会，推举潘国平同志为负责人，本人协助。",
+     a77:"11月6日　参与策划成立工总司，为其骨干。", next:"rally"},
+    {t:"“不要司令。几家厂各出一个人，轮流主持。”", set:"lead_col",
+     a66:"11月6日　愚园路筹备会，提议实行集体领导、轮流主持。",
+     a77:"11月6日　在工总司筹建中积极出谋划策，为其骨干。", next:"rally"}
+  ],
+  src:`<p><span class="tag hist">史实</span> 1966年11月6日在愚园路311号开会，决定成立工总司。见黄金海《十年非梦》图注，李逊《革命造反年代》第七章“工总司筹备会议”。</p>
+<p><span class="tag disp">有争议</span> 王洪文如何当上负责人。徐景贤《十年一梦》说他提议“摆条件”，以党员、干部、当过兵的资历压过潘国平；造反派回忆更多强调这是资历的自然结果。</p>
+<p><span class="tag fict">虚构</span> “轮流主持”一项为游戏设定，历史上未发生。</p>`
+};
+
+SC.rally = {
+  stamp:"1966年11月9日 · 下午", place:"文化广场",
+  title:"成立大会",
+  text:()=>{
+    let lead = has("lead_self") ? `你坐在主席台正中。` :
+               has("lead_pan") ? `潘国平是大会执行主席，你坐在他侧后一排。` :
+               `今天轮到潘国平主持。你们事先说好，谁都不单独拍板。`;
+    return `
+<p>广场坐满了人，过道里也站满了。红袖章是前两天连夜赶出来的，有人的袖章字还没干透，蹭红了棉袄。</p>
+<p>${lead}</p>
+<p>三天前在愚园路，屋里只有十几个人。三天里，消息一个厂传一个厂，传单一张一张地抄。今天来的人，你大多不认识。他们是自己来的，请了假，或者没请假。</p>
+<p>大家等的是市委书记曹荻秋。你们事先写信请他来，请他当众承认工总司是合法的革命组织。</p>
+<p>他没有来。市委的态度早就传开了，三个字：不参加，不承认，不支持。市委还发了通知，要各厂工人坚守岗位，不要参加工总司的活动。</p>
+<p>这三个字的分量，台上台下每个人都掂得出来。不被承认，工总司就是非法组织。今天到场的每一个人，回到厂里都会被记上一笔。工作队整的那些黑材料，一张也不会退回来。他们之前挨过的整，只是开头。</p>
+<p>铁路局装卸机械厂的人上台控诉，讲他们怎么被私设公堂关押毒打，说着说着哭出了声，话都说不下去，旁边的人上去扶着他。台下开始骚动，有人喊口号，有人骂娘，有人往台上挤，话筒前乱成一团。${has("lead_self") ? `有人凑到你耳边：“小潘压不住场。”` : ``}</p>
+<p>天快黑了。广场上的人站在冷风里，谁也不肯走。他们在等台上的人说一句话：接下来怎么办。</p>`},
+  choices:[
+    {t:"“去北京。市委不认，我们找中央认。”", set:"go_north",
+     a66:"11月9日　工总司成立大会后，率部分工人赴京向中央反映情况。",
+     a77:"11月9日　煽动工人擅离生产岗位，强行北上，冲击铁路。", next:"anting"},
+    {t:"“去康平路，到市委门口等曹荻秋出来。”", set:"wait_cmte",
+     a66:"11月9日　会后赴市委，要求领导接见。",
+     a77:"11月9日　带人围困市委机关。", next:"anting"},
+    {t:"“今天先散了。明天各回各厂，上班。”", set:"go_home",
+     a66:"11月9日　会后动员工人返厂，坚持生产。",
+     a77:null, next:"home"}
+  ],
+  src:`<p><span class="tag hist">史实</span> 11月9日在文化广场召开成立大会，市委采取“三不”方针，曹荻秋没有到场。会场一度混乱，据李逊书转引，潘国平被撤下，临时由张宝林担任执行主席。黄金海回忆录对大会为何拖到很晚另有解释。</p>
+<p><span class="tag hist">史实</span> 当晚工总司决定北上告状。</p>
+<p><span class="tag fict">虚构</span> 去市委等候、散会回厂两项为游戏分支。</p>`
+};
+
+SC.home = {
+  stamp:"1966年11月10日 · 早班", place:"国棉十七厂",
+  title:"回厂", end:true,
+  text:()=>`
+<p>你六点半进厂。保卫科的门锁着，钥匙在你口袋里。</p>
+<p>中午食堂里，广播没有提，大家在传：昨天夜里，好几千人从北站上了车，车没开到北京，停在嘉定过去一个叫安亭的小站。工人下到铁轨上，把沪宁线堵死了。</p>
+<p>有人问你：“王干事，你昨天不是也在文化广场吗？”</p>
+<p>你说你回来上班了。那人看了你一会儿，端着饭盒走了。</p>
+<p>后来的事你都是从报纸上看到的。你认识的那些名字，一个个登在头版上，又一个个从头版上消失。1976年10月，车间的喇叭里念出一串名字，里面没有你。</p>
+<p class="aside">你醒过来。秦城的灯一夜不关。这一次，你梦见的是另一个人的一生。</p>`,
+  src:`<p><span class="tag fict">虚构</span> 回厂线为游戏分支。它想问的是，一个人退出以后，历史是否照样发生。</p>`
+};
+
+SC.anting = {
+  stamp:"1966年11月10日 · 凌晨", place:"沪宁线 · 安亭站",
+  title:"安亭",
+  text:()=>{
+    let late = has("wait_cmte") ? `<p>你在市委门口站到后半夜，曹荻秋没有出来。有人跑来说，大部队早就去了北站。你赶到时，挤上的是最后一批车。</p>` : ``;
+    let front = has("lead_self") ? `<p>车厢里的人都在看你。</p>` :
+      `<p>潘国平已经在铁轨上了。他转身朝车厢喊：“下来！都下来！”</p>`;
+    return `${late}
+<p>去北京的决定是在大会散场时做的。市委不认，就去找中央认。当天夜里，上千人涌进北站，没有票，也没有介绍信，挤上了一列往北开的车。有人带了两个馒头，有人什么也没带。车厢里挤得转不开身，但没人抱怨。大家说，到了北京，见到毛主席，一切就都清楚了。</p>
+<p>车没有开到北京。过了嘉定，列车在一个小站停下，再也不动了。站牌上写着：安亭。</p>
+<p>等了一个钟头，两个钟头。车厢里有人说是市委打了电话，叫铁路局把车扣下来的。消息传开，车厢里的气氛一下子变了。</p>
+<p>你明白大家在想什么。回去，就是认输。明天一早回到厂里，每个人都会被点名。今晚上了这趟车的人，从此都是“擅离岗位冲击铁路”的人。能让中央听见的，只剩下这条铁路本身了。沪宁线是全国最要紧的一条干线，它一停，北京不可能不知道。</p>
+<p>天还黑着。有人跳下车，沿着路基往前走，站到了两根铁轨中间。接着是第二个，第三个。后面开来一列客车，鸣了很久的笛，也停住了。</p>
+${front}
+<p>十一月的风从田里刮过来。你的手插在棉袄口袋里，摸到那张写着“工总司”三个字的袖章。</p>
+<p>你也清楚另一件事。拦下来的不只是铁路局的车。后面那列客车上坐着的，是一车跟你一样的老百姓。</p>`},
+  choices:[
+    {t:()=> has("lead_self") ? "第一个走下去，站到铁轨上。" : "走下去，站到潘国平旁边。", set:"on_tracks",
+     a66:"11月10日　在安亭站坚持斗争，要求中央承认工总司。",
+     a77:"11月10日　在安亭站卧轨拦车，致沪宁线中断三十余小时。", next:"cabin"},
+    {t:"等前面的人下去了，跟在后面。", set:"followed",
+     a66:"11月10日　在安亭站坚持斗争。",
+     a77:"11月10日　在安亭站卧轨拦车，致沪宁线中断三十余小时。", next:"cabin"},
+    {t:"留在站台上，劝大家别拦车。", set:"dissent",
+     a66:"11月10日　在安亭站，对拦车做法持保留意见。",
+     a77:"11月10日　在安亭现场。", next:"cabin"}
+  ],
+  src:`<p><span class="tag hist">史实</span> 北上列车在安亭被停下，工人卧轨拦车，沪宁线中断三十多小时，近百趟列车受阻。见李逊书第八、九章；王锐〈“安亭事件”的再认识和再研究〉（《二十一世纪》2006）。</p>
+<p><span class="tag disp">有争议</span> 谁第一个下到铁轨上。有流传说法称王洪文是跟在别人后面上去的，出处较弱，暂存疑。</p>
+<p><span class="tag hist">设计</span> 注意第三个选项在1977年的档案里也留下了一行字。</p>`
+};
+
+SC.cabin = {
+  stamp:"1966年11月10日 · 上午", place:"被拦在安亭的一列客车上",
+  title:"车厢里", persona:true,
+  text:()=>`
+<p class="aside">视角切换。你现在是周月娥，四十一岁，国棉某厂的挡车工。<span class="tag fict">虚构人物</span></p>
+<p>你请了三天假去南京，母亲住院了。车在这儿停了四个钟头，没有人来说为什么。</p>
+<p>对面坐着你们厂的老陆，赤卫队的。他从窗口往外看，脸色很难看：“你看看，这就是造反派。车都不让人开。机器停一天，要少出多少布？”</p>
+<p>你也往外看。铁轨上站着一群人，冻得直跺脚。其中一个你认得，是隔壁车间的，去年评先进，还是你们小组推上去的。</p>
+<p>老陆说，这些人都是被坏人挑动的，回去以后厂里要好好查。你没说话。你想的是南京那边，母亲今天有没有人送饭。</p>`,
+  choices:[
+    {t:"下车，去铁轨边问问那个认得的人，为什么要这样。", set:"talked",
+     a66:null, a77:null, next:"table"},
+    {t:"留在座位上，把网兜里的苹果再数一遍。", set:"stayed",
+     a66:null, a77:null, next:"table"}
+  ],
+  src:`<p><span class="tag fict">虚构</span> 周月娥和老陆是合成人物。设计意图是让保守派和普通乘客在场：赤卫队员很多是党团员和劳模，真心相信自己在保卫党委和生产；被拦下的乘客则只是被卷进来的人。</p>
+<p><span class="tag hist">史实</span> 保守派组织“赤卫队”随后迅速发展，与工总司的冲突在12月康平路事件中达到顶点。见李逊书第十章。</p>`
+};
+
+SC.table = {
+  stamp:"1966年11月13日 · 夜", place:"安亭 · 车站附近一间办公室",
+  title:"谈判",
+  text:()=>{
+    let who = has("lead_self") ? `张春桥的目光在几个人脸上扫了一圈，停在你身上。` :
+              `张春桥先跟潘国平握手，然后才转过来看你。`;
+    let dis = has("dissent") ? `<p>你进门的时候，有人在背后说了一句：“站台上那个。”屋里几个人都听见了。</p>` : ``;
+    return `
+<p>三天了。陈伯达从北京发来电报，劝工人回去，说抓革命也要促生产。华东局来了人，市委来了人，都没谈拢。</p>
+<p>今晚来的是中央文革小组的张春桥。他个子不高，戴眼镜，说话很慢，一句一句的，像在念稿子。他说得很清楚：工总司先撤回上海，就地闹革命，其他问题回去再谈。</p>
+${dis}
+<p>${who}</p>
+<p>外面还有几百人在等消息。</p>`},
+  choices:()=>[
+    {t:"“春桥同志，我拥护你的意见，工总司撤回上海。但是有几个问题，要请你表个态。”", set:"deal",
+     lock: has("dissent") ? "你在站台上劝过大家别拦车。在这张桌子前，这句话轮不到你说。" : null,
+     a66:"11月13日　与张春桥同志达成协议，工总司被承认为合法革命组织。",
+     a77:"11月13日　与张春桥勾结，签订所谓“五项要求”，为篡党夺权铺路。", next:"end"},
+    {t:"“工总司一天不承认，我们一步也不退。车不开，我们走也要走到北京。”", set:"hard",
+     lock: has("dissent") ? "站在站台上的人，说不出这句话。" : null,
+     a66:"11月13日　坚持要求中央承认工总司，率部分工人继续北上。",
+     a77:"11月13日　拒不执行中央指示，继续煽动工人北上。", next:"end"},
+    {t:"“让小潘来谈，他比我会说。”", set:"let_pan",
+     lock: has("lead_self") && !has("dissent") ? null : null,
+     a66:"11月13日　协助潘国平同志与中央代表谈判。",
+     a77:"11月13日　参与安亭谈判。", next:"end"},
+    ...(has("dissent") ? [{t:"“电报说得对。愿意回去的，跟我先回去。”", set:"go_back",
+     a66:"11月13日　响应中央号召，带领部分工人返沪。",
+     a77:"11月13日　在安亭事件中后期返沪。", next:"end"}] : [])
+  ],
+  src:`<p><span class="tag hist">史实</span> 陈伯达曾发电报劝工人返回。张春桥在未经华东局和上海市委同意的情况下，于11月13日与工总司签下五项要求，承认工总司为合法组织、安亭事件为革命行动。见王锐2006论文，李逊书第九章。</p>
+<p><span class="tag disp">有争议</span> 第一个选项的台词据叶永烈的叙述改写，他写王洪文先退一步再提条件，让张春桥暗自称奇。这是传记作者的叙述，不是会议记录。</p>
+<p><span class="tag hist">史实</span> 协议签订后，王洪文带多数人回上海；潘国平不满足，带一部分人去了苏州，张春桥又赶去苏州再次谈判。</p>`
+};
+
+/* ---------- epilogue ---------- */
+function outcome(){
+  if(has("go_home")) return "home";
+  if(has("go_back")) return "back";
+  if(has("hard")) return "hard";
+  if(has("let_pan")) return "pan";
+  return "deal";
+}
+function lensText(which){
+  const o = outcome(), L = has("lead_self")?"self":has("lead_pan")?"pan":"col";
+  const T = has("on_tracks")?"on":has("followed")?"fol":has("dissent")?"dis":"none";
+  if(which==="huang"){
+    let s = [];
+    s.push(`我毫不讳言，那年冬天我和他是一条战壕里的。`);
+    if(o==="home") s.push(`成立大会那天散了会，他说回厂上班，后来就没再见他出来。有人说他软，我不这么看，那时候谁都不知道明天会怎样。`);
+    else {
+      s.push(L==="self"?`工总司选头头，他是党员、干部、当过兵，条件摆在那里，大家服气。`:L==="pan"?`他那天把位置让给了小潘，这一点很多人后来都忘了。`:`他提出轮流主持，说工人的组织不要搞成衙门。现在回头看，这话是对的。`);
+      s.push(T==="on"?`安亭那天夜里，他是自己走下铁轨的，没人推他。`:T==="fol"?`安亭那天，他跟大家一起下了铁轨。`:T==="dis"?`安亭那天他有顾虑，劝过大家。有人拿这个说他动摇，我认为是负责任。`:``);
+      s.push(o==="deal"?`跟张春桥谈，他懂得先退一步，为工总司争来了合法地位。后来写书的人说他耍手腕，那是没在现场。`:o==="hard"?`他宁可带人走去苏州也不肯先退，这股劲儿是真的。`:o==="pan"?`他让小潘去谈，自己在后面稳住队伍。这种事情，没人记得。`:`他带着愿意回去的人先回了上海，不容易，两头不讨好。`);
+    }
+    return s.join("");
+  }
+  if(which==="xu"){
+    let s = [];
+    if(o==="home") return `此人成立大会后即回厂，此后在运动中无足轻重。上海的事情与他没有什么关系。`;
+    s.push(L==="self"?`工总司头头的位置，他是靠摆资历的小手段抢来的，本来冲锋陷阵的是潘国平。`:L==="pan"?`工总司初期出头的是潘国平，他只是个协助的。`:`他提过什么轮流主持，说说而已，很快就没人再提。`);
+    s.push(T==="on"?`安亭卧轨，他是带头的，后来给国家造成多大损失，他自己心里也未必清楚。`:T==="fol"?`安亭卧轨，别人冲上去了，他才跟上去。`:T==="dis"?`安亭那天他站在站台上看，两边都不得罪。`:``);
+    s.push(o==="deal"?`谈判桌上他很会看张春桥的脸色，这是他后来一路上去的本钱。`:o==="hard"?`他硬顶中央代表，是不懂政治的表现。`:o==="pan"?`谈判时他让潘国平出头，自己躲在后面，出了事也牵连不到他。`:`他半路带人回去，工总司里没人把他当回事。`);
+    return s.join("");
+  }
+  // lixun
+  let s = [];
+  if(o==="home") return `一个人在11月9日退出，并不改变安亭事件的发生。工总司的崛起有其结构原因，市委的“三不”方针、中央文革对工人组织的需要、工厂内部积累的矛盾，这些都不取决于某一个人。值得追问的是，那些没有走出去的人，在后来的清查中和改革中又经历了什么。`;
+  s.push(`安亭事件是上海工人造反派崛起的起点。工总司的合法化，首先得益于中央文革的政治需要，张春桥在未经华东局与市委同意的情况下签字，改变了此后上海的权力格局。`);
+  s.push(L==="self"?`从领导层构成看，这一次党员、干部身份占了上风，这也解释了后来为什么同为造反派，有人被整肃，有人被吸纳进体制。`:L==="pan"?`这一次领导层由没有党员身份的年轻工人主导，可以设想，工总司后来被吸纳进体制的过程会更加曲折。`:`集体领导的设想，与巴黎公社原则在文革初期的动员作用有关；但这些原则在后来的权力重组中逐渐蜕变。`);
+  s.push(T==="dis"?`在现场持保留意见的人并不少见，他们的声音在两种主流叙述中都很少被记录。`:``);
+  s.push(o==="hard"?`现场的激进与妥协并非固定属于某个人，同一个人在不同处境下可能选择不同。`:``);
+  return s.join("");
+}
+function relLines(){
+  const o = outcome();
+  const pan = o==="home" ? "后来你在报上看到他的名字，登了两年，又没有了。" :
+    has("lead_self") ? (o==="deal" ? "他带着人去了苏州。临走前没跟你打招呼。" : o==="hard" ? "这一次是他留下来跟张春桥签了字，回上海时站在队伍最前面。" : "他谈下了协议，在人群里被人扛了起来。")
+    : (o==="pan"||has("lead_pan") ? "他叫你“老王”，拍着你的肩膀说，没有你稳住后面，他在前面什么也干不成。" : "他看你的眼神有点复杂。");
+  const huang = o==="home" ? "他没有来找你。后来听说他坐了十五年牢。" :
+    has("dissent") ? "他那天晚上没有跟你坐在一起，但第二天早上给你带了一个馒头。" : "他在回上海的车上一直跟你说话，说回去以后要办一张报纸。";
+  const zhang = o==="home" ? "你没有见过他。" : has("deal") ? "他记住了你的名字。" : has("hard") ? "他在本子上写了几个字，你没看清。" : "他跟你握过一次手。";
+  const zhou = has("talked") ? "那天她下车问了那个认得的人。她后来没有赶到南京。" : "她在车上坐到第二天下午。母亲的事，她后来一直没跟人提起那天。";
+  return {pan, huang, zhang, zhou};
+}
+
+/* ---------- render ---------- */
+const app = document.getElementById("app");
+function esc(s){return s}
+function render(){
+  document.getElementById("dreams").innerHTML = `这是你第 <b>${dreamCount}</b> 次梦见安亭`;
+  if(st.scene==="title") return renderTitle();
+  if(st.scene==="end") return renderEnd();
+  const sc = SC[st.scene];
+  const choices = typeof sc.choices==="function" ? sc.choices() : (sc.choices||[]);
+  let html = `<div class="fade">
+    <div class="stamp">${sc.stamp}</div><div class="place">${sc.place}</div>
+    <h2>${sc.title}${sc.persona?'<span class="tag fict">插曲</span>':''}</h2>
+    <div class="story">${gloss(sc.text())}</div>`;
+  if(sc.end){
+    html += `<div class="choices"><button class="choice" id="c-end" data-end="1">醒来</button></div>`;
+  } else {
+    html += `<div class="choices">` + choices.map((c,i)=>{
+      const t = typeof c.t==="function"?c.t():c.t;
+      if(c.lock) return `<button class="choice locked" id="c-${st.scene}-${i}" aria-disabled="true">${t}<span class="why">${c.lock}</span></button>`;
+      return `<button class="choice" id="c-${st.scene}-${i}" data-i="${i}">${t}</button>`;
+    }).join("") + `</div>`;
+  }
+  html += toolbar(sc.src) + `</div>`;
+  app.innerHTML = html;
+  wire(choices);
+}
+function toolbar(src){
+  return `<div class="bar">
+    <button class="tbtn" id="t-arch" aria-pressed="${st.tab==='arch'}">档案</button>
+    <button class="tbtn" id="t-src" aria-pressed="${st.tab==='src'}">史料注</button>
+    <button class="tbtn" id="t-gl" aria-pressed="${st.tab==='gl'}">词条</button>
+  </div>
+  ${st.tab==='gl'?glossPanel():''}
+  ${st.tab==='arch'?archivePanel():''}
+  ${st.tab==='src'?`<div class="panel src"><h3>这一段依据什么</h3>${src}</div>`:''}`;
+}
+function glossPanel(){
+  const items = st.seen.map(k=>`<button type="button" class="g" data-g="${k}">${GLOSS[k].t}</button>`).join("");
+  return `<div class="panel"><h3>到目前为止出现过的人物和事件</h3><div class="glist">${items||"还没有。"}</div></div>`;
+}
+function archivePanel(){
+  const rows = st.archive.filter(r=>r.a66!==null || r.a77!==null);
+  let items = rows.length ? rows.map(r=>{
+    if(st.y77) return r.a77 ? `<li class="y77">${r.a77}</li>` : `<li class="y77 empty">（清查材料中无此项记录）</li>`;
+    return `<li>${r.a66}</li>`;
+  }).join("") : `<li class="empty">档案袋还是空的。</li>`;
+  return `<div class="panel"><h3>王洪文　国棉十七厂保卫科　个人档案</h3>
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="tbtn" id="y66" aria-pressed="${!st.y77}">1966年的写法</button>
+      <button class="tbtn" id="y77" aria-pressed="${st.y77}">1977年的写法</button>
+    </div><ul class="arch">${items}</ul></div>`;
+}
+function wire(choices){
+  app.querySelectorAll(".choice[data-i]").forEach(b=>b.addEventListener("click",()=>{
+    const c = choices[+b.dataset.i];
+    st.facts.push(c.set);
+    if(c.a66!==null || c.a77!==null) st.archive.push({a66:c.a66, a77:c.a77});
+    st.scene = c.next; st.tab = null; save(); render(); window.scrollTo({top:0});
+  }));
+  const e = document.getElementById("c-end");
+  if(e) e.addEventListener("click",()=>{ st.scene="end"; st.tab=null; save(); render(); window.scrollTo({top:0}); });
+  bindBar();
+}
+function bindBar(){
+  const a = document.getElementById("t-arch"), s = document.getElementById("t-src");
+  if(a) a.onclick=()=>{ st.tab = st.tab==='arch'?null:'arch'; save(); render() };
+  if(s) s.onclick=()=>{ st.tab = st.tab==='src'?null:'src'; save(); render() };
+  const gl = document.getElementById("t-gl");
+  if(gl) gl.onclick=()=>{ st.tab = st.tab==='gl'?null:'gl'; save(); render() };
+  const y6=document.getElementById("y66"), y7=document.getElementById("y77");
+  if(y6) y6.onclick=()=>{ st.y77=false; save(); render() };
+  if(y7) y7.onclick=()=>{ st.y77=true; save(); render() };
+}
+function renderTitle(){
+  app.innerHTML = `<div class="fade">
+    <h1>梦与非梦<small>第一幕　安亭　1966</small></h1>
+    <div class="story">
+      <p>${"秦城"}监狱，八十年代的某一夜。走廊的灯一夜不关。</p>
+      <p>你又梦见那年冬天。愚园路那间烟雾弥漫的屋子，文化广场上的几万人，安亭站两根冰冷的铁轨。</p>
+      <p>梦里的事可以不一样。醒来以后，档案还是那份档案。</p>
+    </div>
+    <p class="note-start">这个试玩没有数值。游戏只记住你做过什么，以及别人怎么记住你。每一段都可以打开“史料注”，看哪些是史实、哪些有争议、哪些是虚构。</p>
+    <div class="choices"><button class="choice" id="start">入梦</button></div>
+  </div>`;
+  document.getElementById("start").onclick=()=>{ st=Object.assign({},S0,{facts:[],archive:[]}); st.scene="p1"; save(); render(); };
+}
+function renderEnd(){
+  const r = relLines();
+  const tab = st.lens;
+  let body="";
+  if(tab==="huang"||tab==="xu"||tab==="li"){
+    const name = {huang:"战友的讲法　仿黄金海《十年非梦》的立场",xu:"官员的讲法　仿徐景贤《十年一梦》的立场",li:"研究者的讲法　仿李逊《革命造反年代》的立场"}[tab];
+    body = `<div class="lens"><h3 style="font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:500;margin:0">${name}</h3>
+      <p>${lensText(tab)}</p>
+      <p class="disclaim">以上为依据各书立场的仿写，不是原文，也不代表作者真实说过这些话。</p></div>`;
+  } else if(tab==="rel"){
+    body = `<div class="rel">
+      <div><b>潘国平</b><span>${r.pan}</span></div>
+      <div><b>黄金海</b><span>${r.huang}</span></div>
+      <div><b>张春桥</b><span>${r.zhang}</span></div>
+      <div><b>周月娥</b><span>${r.zhou}</span></div></div>`;
+  } else if(tab==="hist"){
+    body = gloss(`<div class="lens"><p>历史上，11月6日工总司在愚园路筹备；9日在文化广场开成立大会，曹荻秋没有到场，会场一度混乱；当晚工人北上，列车停在安亭，工人卧轨拦车，沪宁线中断三十多小时。陈伯达来电劝返。13日张春桥签下五项要求，承认工总司合法、安亭事件为革命行动。王洪文带多数人回沪，潘国平带一部分人去了苏州。</p>
+      <p>这件事让工总司合法化，也让王洪文从一个工厂保卫干事，开始进入张春桥的视野。</p>
+      <p class="disclaim">下一幕：解放日报事件、康平路（尚未制作）</p></div>`);
+  }
+  app.innerHTML = `<div class="fade">
+    <div class="stamp">198?年 · 夜</div><div class="place">秦城监狱</div>
+    <h2>${outcome()==="home"?"你没有去安亭":"安亭之后"}</h2>
+    <div class="story"><p>你醒过来。同一件事，有好几种讲法。</p></div>
+    <div class="tabs" role="tablist">
+      ${[["huang","战友"],["xu","官员"],["li","研究者"],["rel","人物"],["hist","史实"]].map(([k,n])=>`<button class="tbtn" id="lens-${k}" aria-pressed="${tab===k}" data-k="${k}">${n}</button>`).join("")}
+    </div>
+    <div class="panel">${body}</div>
+    <div class="bar"><button class="tbtn" id="t-arch" aria-pressed="${st.tab==='arch'}">档案</button><button class="tbtn" id="t-gl" aria-pressed="${st.tab==='gl'}">词条</button></div>
+    ${st.tab==='arch'?archivePanel():''}${st.tab==='gl'?glossPanel():''}
+    <button class="restart" id="again">再做一次梦</button>
+  </div>`;
+  app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{ st.lens=b.dataset.k; save(); render(); });
+  bindBar();
+  document.getElementById("again").onclick=()=>{
+    dreamCount++; try{localStorage.setItem("mfm-dreams",String(dreamCount))}catch(e){}
+    st=Object.assign({},S0,{facts:[],archive:[]}); st.scene="p1"; save(); render(); window.scrollTo({top:0});
+  };
+}
+function save(){}
+if(window.claude && window.claude.hot && window.claude.hot.snapshot){
+  try{ window.claude.hot.snapshot(()=>({st})) }catch(e){}
+}
+render();
+})();
+</script>
+
+</body>
+</html>
